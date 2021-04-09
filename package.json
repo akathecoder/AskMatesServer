@@ -1,0 +1,14 @@
+{
+  "name": "ask-mates-server",
+  "version": "1.0.0",
+  "description": "Restful CRUD API to interact with MySQL DB for Project 'AskMates'",
+  "main": "server.js",
+  "author": "akathecoder",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "mysql2": "^2.2.5"
+  },
+  "type": "commonjs"
+}
