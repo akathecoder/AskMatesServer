@@ -1,7 +1,7 @@
 const sql = require("./db");
 
 // Constructor
-const User = (user) => {
+const User = function (user) {
   this.username = user.username;
   this.password = user.password;
   this.firstName = user.firstName;
@@ -17,4 +17,121 @@ const User = (user) => {
   this.mobileNumber = user.mobileNumber;
 };
 
-modules.exports = User;
+// * Insert a new User into the user Table
+User.create = (newUser, result) => {
+  // const sqlQuery = `INSERT INTO user (username, password, firstName, middleName, lastName, email, bio, batch, degree, field, rollNo, dob, mobileNumber) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);`;
+  // const newUserData = [];
+
+  const sqlQuery2 = "INSERT INTO user SET ?";
+
+  sql.query(sqlQuery2, newUser, (err, res) => {
+    if (err) {
+      // console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    console.log("created user: ", {
+      id: res.insertId,
+      ...newUser,
+    });
+    result(null, { id: res.insertId, ...newUser });
+  });
+};
+
+// * Returns the data of User by userId by running SELECT
+User.findByUsername = (username, result) => {
+  console.log(username);
+
+  sql.query(
+    `SELECT username, firstName, middleName, lastName, email, bio, batch, degree, field, rollNo, dob FROM user WHERE username = ?`,
+    username,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      if (res.length) {
+        console.log("found user: ", res[0]);
+        result(null, res[0]);
+        return;
+      }
+
+      // not found user with the username === username
+      result({ kind: "not_found" }, null);
+    }
+  );
+};
+
+// * Returns the data of all users
+User.getAll = (result) => {
+  const sqlQuery =
+    "SELECT username, firstName, middleName, lastName, email, bio, batch, degree, field, rollNo, dob FROM user";
+
+  sql.query(sqlQuery, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
+    }
+
+    console.log("users: ", res);
+    result(null, res);
+  });
+};
+
+// * Updates the user data by username
+// ! Error: SQL Query
+User.updateById = (username, user, result) => {
+  sql.query(
+    "UPDATE user SET ? WHERE username = " + username,
+    user,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("updated user: ", {
+        id: username,
+        ...user,
+      });
+      result(null, { id: username, ...user });
+    }
+  );
+};
+
+// * Removes a User
+User.remove = (username, result) => {
+  sql.query(
+    "DELETE FROM user WHERE username = ?",
+    username,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("deleted user with username: ", username);
+      result(null, res);
+    }
+  );
+};
+
+module.exports = User;
