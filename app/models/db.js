@@ -10,8 +10,6 @@ const connection = mysql.createConnection({
   port: dbConfig.PORT,
 });
 
-console.log("ss");
-
 // open the MySQL connection
 connection.connect((error) => {
   if (error) throw error;
