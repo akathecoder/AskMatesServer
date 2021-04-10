@@ -15,5 +15,14 @@ module.exports = (app) => {
   app.put("/users/:username", users.update);
 
   // Delete a User with userId
-  app.delete("/users/:username", users.delete);
+  app.delete("/users/:username/", users.delete);
+
+  // Login by Authenticate Password
+  app.post("/authenticate", users.authenticate);
+
+  // Checks if a username already exists
+  app.get("/username", users.username);
+
+  // Checks if a email already exists
+  app.get("/email", users.email);
 };

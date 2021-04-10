@@ -35,7 +35,10 @@ User.create = (newUser, result) => {
       id: res.insertId,
       ...newUser,
     });
-    result(null, { id: res.insertId, ...newUser });
+    result(null, {
+      message:
+        "user created with username " + newUser.username,
+    });
   });
 };
 
@@ -130,6 +133,93 @@ User.remove = (username, result) => {
 
       console.log("deleted user with username: ", username);
       result(null, res);
+    }
+  );
+};
+
+// * Checks Password
+User.checkPassword = (username, password, result) => {
+  sql.query(
+    "SELECT password from user WHERE username = ?",
+    [username],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      if (res.length) {
+        if (res[0].password == password) {
+          console.log(
+            "password authenticated : ",
+            username
+          );
+          result(null, {
+            message: "authentication successful",
+          });
+          return;
+        } else {
+          result({ kind: "not_found" }, null);
+          return;
+        }
+      }
+
+      result({ kind: "not_found" }, null);
+    }
+  );
+};
+
+// * Checks if a username exists or not
+User.checkUsername = (username, result) => {
+  sql.query(
+    "SELECT username FROM user WHERE username = ?",
+    [username],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      if (res.length) {
+        if (res[0].username == username) {
+          result(null, "user_found");
+          return;
+        } else {
+          result(null, "user_not_found");
+          return;
+        }
+      }
+
+      result(null, "user_not_found");
+    }
+  );
+};
+
+// * Checks if a email exists or not
+User.checkEmail = (email, result) => {
+  sql.query(
+    "SELECT email FROM user WHERE email = ?",
+    [email],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      if (res.length) {
+        if (res[0].email == email) {
+          result(null, "email_found");
+          return;
+        } else {
+          result(null, "email_not_found");
+          return;
+        }
+      }
+
+      result(null, "email_not_found");
     }
   );
 };
