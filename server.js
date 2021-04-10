@@ -25,6 +25,9 @@ app.get("/", (req, res) => {
   });
 });
 
+// Add Routes
+require("./app/routes/user.routes.js")(app);
+
 // set port, listen for requests
 const PORT = process.env.PORT || 4001;
 app.listen(PORT, () => {
