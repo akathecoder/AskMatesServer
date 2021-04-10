@@ -5,7 +5,7 @@ module.exports = (app) => {
   app.post("/users", users.create);
 
   // Retrieve all users
-  app.get("/users", customers.findAll);
+  app.get("/users", users.findAll);
 
   // Retrieve a single user with userId
   app.get("/users/:userId", users.findOne);
@@ -14,5 +14,5 @@ module.exports = (app) => {
   app.put("/users/:userId", users.update);
 
   // Delete a User with userId
-  app.delete("/users/:userId", customers.delete);
+  app.delete("/users/:userId", users.delete);
 };

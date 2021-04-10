@@ -17,4 +17,4 @@ const User = (user) => {
   this.mobileNumber = user.mobileNumber;
 };
 
-modules.exports = User;
+module.exports = User;
