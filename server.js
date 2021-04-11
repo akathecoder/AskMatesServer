@@ -27,6 +27,8 @@ app.get("/", (req, res) => {
 
 // Add Routes
 require("./app/routes/user.routes.js")(app);
+require("./app/routes/questions.routes.js")(app);
+require("./app/routes/answer.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 4001;

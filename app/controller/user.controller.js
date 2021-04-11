@@ -194,7 +194,7 @@ exports.username = (req, res) => {
       return;
     }
 
-    res.status(400).send({
+    res.status(200).send({
       message: "username already exists",
     });
   });
@@ -223,7 +223,7 @@ exports.email = (req, res) => {
       return;
     }
 
-    res.status(400).send({
+    res.status(200).send({
       message: "email already exists",
     });
   });
