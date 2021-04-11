@@ -6,9 +6,9 @@ const app = express();
 
 // Added Cors Headers to Whitelist localhost:3000
 app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
+	cors({
+		origin: "http://localhost:3000",
+	})
 );
 
 // parse requests of content-type - application/json
@@ -20,16 +20,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({
-    message: "Welcome to akathecoder application.",
-  });
+	res.json({
+		message: "Welcome to akathecoder application.",
+	});
 });
 
 // Add Routes
 require("./app/routes/user.routes.js")(app);
+require("./app/routes/answer.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 4001;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+	console.log(`Server is running on port ${PORT}.`);
 });
