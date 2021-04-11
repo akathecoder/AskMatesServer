@@ -51,7 +51,7 @@ exports.findAll = (req, res) => {
           "Some error occurred while retrieving users.",
       });
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 };
@@ -72,7 +72,7 @@ exports.findOne = (req, res) => {
         });
       }
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 };
@@ -104,7 +104,7 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        res.send(data);
+        res.status(200).send(data);
       }
     }
   );
@@ -126,7 +126,7 @@ exports.delete = (req, res) => {
         });
       }
     } else
-      res.send({
+      res.status(200).send({
         message: `User was deleted successfully!`,
       });
   });
