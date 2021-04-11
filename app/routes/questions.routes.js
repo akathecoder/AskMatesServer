@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  const questions = require("../controller/questions.controller");
+  const questions = require("../controller/questions.controller.js");
 
   // Create a new Question
   app.post("/questions", questions.create);
@@ -16,6 +16,9 @@ module.exports = (app) => {
   // Retrieve a Question by questionId
   app.get("/questions/:questionId", questions.getById);
 
+  // Retrieve a Question using filter in content or question description.
+  app.get("/questions/question/:search", questions.getBySearch);
+
   // Retrieve all Questions by userId
-  app.get("/questions/:userId", questions.getByUserId);
+  app.get("/questions/username/:username", questions.getByUsername);
 };
