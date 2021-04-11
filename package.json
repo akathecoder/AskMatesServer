@@ -6,6 +6,7 @@
   "author": "akathecoder",
   "license": "MIT",
   "scripts": {
+    "dev": "nodemon -r dotenv/config server.js",
     "start": "node -r dotenv/config server.js"
   },
   "dependencies": {
@@ -14,5 +15,8 @@
     "express": "^4.17.1",
     "mysql2": "^2.2.5"
   },
-  "type": "commonjs"
+  "type": "commonjs",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
 }
