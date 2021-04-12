@@ -56,7 +56,8 @@ Question.updateById = (quesId, question, result) => {
   //   quesId,
   // ];
 
-  const query = "UPDATE question SET ? WHERE questionId = ?";
+  const query =
+    "UPDATE question SET ? WHERE questionId = ?";
   const parameters = [question, quesId];
   sql.query(query, parameters, (err, res) => {
     if (err) {
@@ -118,8 +119,28 @@ Question.getAll = (result) => {
 // -----------------------------------
 // Get Question by questionId
 Question.getById = (quesId, result) => {
-  const query = "SELECT * FROM question WHERE questionId = ?";
+  const query =
+    "SELECT * FROM question WHERE questionId = ?";
   const parameters = [quesId];
+  sql.query(query, parameters, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    if (!res.length) {
+      result({ kind: "not_found" }, null);
+      return;
+    }
+    // console.log("Question : ", res);
+    result(null, ...res);
+  });
+};
+
+// Get Question by question slug
+Question.getBySlug = (slug, result) => {
+  const query = "SELECT * FROM question WHERE slug = ?";
+  const parameters = [slug];
   sql.query(query, parameters, (err, res) => {
     if (err) {
       console.log("error: ", err);

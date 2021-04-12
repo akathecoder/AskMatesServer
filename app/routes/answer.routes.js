@@ -1,5 +1,5 @@
-module.exports = app => {
-	const answers = require("../controller/answer.controller.js");
+module.exports = (app) => {
+  const answers = require("../controller/answer.controller.js");
 
 	// -------------------------------------------------------------------
 	// POST
