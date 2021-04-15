@@ -13,8 +13,9 @@ const Question = function (question) {
 // -------------------------------------------------------------------
 // %Y-%m-%d %H:%i:%s
 // SETTERS
-// -----------------------------------
+// -------------------
 // Create new Question
+// -------------------
 Question.create = (newQuestion, result) => {
   // const query =
   //   "INSERT INTO question(doc, views, title, content, userId, slug) VALUES (TO_DATE(?,'YYYY-MM-DD hh:mm:ss'), ?, ?, ?, ?, ?)";
@@ -41,8 +42,9 @@ Question.create = (newQuestion, result) => {
   });
 };
 
-// -----------------------------------
+// -----------------------------------------
 // Update the whole Question with questionId
+// -----------------------------------------
 Question.updateById = (quesId, question, result) => {
   // const query =
   //   "UPDATE Question SET doc = ? , views = ? , title = ? , content = ? , userId = ?, slug = ? WHERE questionId = ?";
@@ -56,8 +58,7 @@ Question.updateById = (quesId, question, result) => {
   //   quesId,
   // ];
 
-  const query =
-    "UPDATE question SET ? WHERE questionId = ?";
+  const query = "UPDATE question SET ? WHERE questionId = ?";
   const parameters = [question, quesId];
   sql.query(query, parameters, (err, res) => {
     if (err) {
@@ -77,8 +78,9 @@ Question.updateById = (quesId, question, result) => {
   });
 };
 
-// -----------------------------------
+// -------------------------------
 // Delete Question with questionId
+// -------------------------------
 Question.deleteById = (quesId, result) => {
   const query = "DELETE FROM question WHERE questionId = ?";
   const parameters = [quesId];
@@ -100,8 +102,9 @@ Question.deleteById = (quesId, result) => {
 // -------------------------------------------------------------------
 
 //GETTERS
-// -----------------------------------
+// ---------------------
 // Get All the Questions
+// ---------------------
 Question.getAll = (result) => {
   const query =
     "SELECT questionId, doc, views, title,content, slug, question.username, firstName, middleName, lastName, email, bio, batch, degree, field FROM question, user WHERE question.username = user.username";
@@ -116,11 +119,11 @@ Question.getAll = (result) => {
   });
 };
 
-// -----------------------------------
+// --------------------------
 // Get Question by questionId
+// --------------------------
 Question.getById = (quesId, result) => {
-  const query =
-    "SELECT * FROM question WHERE questionId = ?";
+  const query = "SELECT * FROM question WHERE questionId = ?";
   const parameters = [quesId];
   sql.query(query, parameters, (err, res) => {
     if (err) {
@@ -137,7 +140,9 @@ Question.getById = (quesId, result) => {
   });
 };
 
+// -----------------------------
 // Get Question by question slug
+// -----------------------------
 Question.getBySlug = (slug, result) => {
   const query = "SELECT * FROM question WHERE slug = ?";
   const parameters = [slug];
@@ -156,8 +161,9 @@ Question.getBySlug = (slug, result) => {
   });
 };
 
-// -----------------------------------
+// ----------------------
 // Get Question by userId
+// ----------------------
 Question.getByUsername = (username, result) => {
   const query = "SELECT * FROM question WHERE username = ?";
   const parameters = [username];
@@ -176,8 +182,9 @@ Question.getByUsername = (username, result) => {
   });
 };
 
-// -----------------------------------
-// Get Question by userId
+// ---------------------------------------------------
+// Get Question by search filter in content and title.
+// ---------------------------------------------------
 Question.getBySearch = (description, result) => {
   const query =
     "SELECT questionId, doc, views, title,content, slug, question.username, firstName, middleName, lastName, email, bio, batch, degree, field FROM question, user WHERE question.username = user.username and (title like ? or content like ?)";
@@ -198,6 +205,31 @@ Question.getBySearch = (description, result) => {
     result(null, { ...res });
   });
 };
+
+// -------------------------------------------
+// Get Views updated on click of any question.
+// -------------------------------------------
+Question.updateViews = (slug, result) => {
+  const query1 = "SELECT views FROM question WHERE slug = ?";
+  const query2 = "UPDATE question SET views = ? WHERE slug = ?";
+
+  sql.query(query1, [slug], (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    if (!res.length) {
+      result({ kind: "not_found" }, null);
+      return;
+    }
+    const views_new = res[0].views + 1;
+    sql.query(query2, [views_new, slug], (err, res) => {
+      result(null, res);
+    });
+  });
+};
+
 // -------------------------------------------------------------------
 
 module.exports = Question;
