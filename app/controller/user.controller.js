@@ -1,4 +1,8 @@
 const User = require("../models/User.model.js");
+const {
+  generateAccessToken,
+  checkAccessToken,
+} = require("../utils/jwtAuth");
 
 // Password Hashing
 const bcrypt = require("bcrypt");
@@ -61,17 +65,25 @@ exports.create = async (req, res) => {
 
 // * Retrieve all Users from the database.
 exports.findAll = (req, res) => {
-  User.getAll((err, data) => {
-    if (err) {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving users.",
-      });
-    } else {
-      res.status(200).send(data);
-    }
-  });
+  // console.log(req.cookies.auth);
+
+  if (checkAccessToken(req.cookies.auth)) {
+    User.getAll((err, data) => {
+      if (err) {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving users.",
+        });
+      } else {
+        res.status(200).send(data);
+      }
+    });
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
 
 // * Find a Single User with a userId
@@ -201,7 +213,16 @@ exports.authenticate = (req, res) => {
           });
         }
       } else {
-        res.status(200).send(data);
+        const token = generateAccessToken(
+          req.body.username
+        );
+        res
+          .status(200)
+          .cookie("auth", token, { httpOnly: true })
+          .send({
+            message: data.message,
+            auth: token,
+          });
       }
     }
   );
