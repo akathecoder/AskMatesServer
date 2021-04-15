@@ -88,23 +88,32 @@ exports.findAll = (req, res) => {
 
 // * Find a Single User with a userId
 exports.findOne = (req, res) => {
-  User.findByUsername(req.params.username, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        res.status(404).send({
-          message: `Not found User with username ${req.params.username}.`,
-        });
-      } else {
-        res.status(500).send({
-          message:
-            "Error retrieving User with username " +
-            req.params.username,
-        });
+  if (checkAccessToken(req.cookies.auth)) {
+    User.findByUsername(
+      req.params.username,
+      (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message: `Not found User with username ${req.params.username}.`,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Error retrieving User with username " +
+                req.params.username,
+            });
+          }
+        } else {
+          res.status(200).send(data);
+        }
       }
-    } else {
-      res.status(200).send(data);
-    }
-  });
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
 
 // * Update a User identified by the username in the request
@@ -116,29 +125,64 @@ exports.update = (req, res) => {
     });
   }
 
-  // Create a User
-  const user = {
-    firstName: req.body.firstName,
-    middleName: req.body.middleName,
-    lastName: req.body.lastName,
-    bio: req.body.bio,
-    batch: req.body.batch,
-    degree: req.body.degree,
-    field: req.body.field,
-    rollNo: req.body.rollNo,
-    dob: req.body.dob,
-  };
+  if (
+    checkAccessToken(req.cookies.auth) ==
+    req.params.username
+  ) {
+    // Create a User
+    const user = {
+      firstName: req.body.firstName,
+      middleName: req.body.middleName,
+      lastName: req.body.lastName,
+      bio: req.body.bio,
+      batch: req.body.batch,
+      degree: req.body.degree,
+      field: req.body.field,
+      rollNo: req.body.rollNo,
+      dob: req.body.dob,
+    };
 
-  // Removes undefined keys
-  Object.keys(user).forEach(
-    (key) => user[key] === undefined && delete user[key]
-  );
+    // Removes undefined keys
+    Object.keys(user).forEach(
+      (key) => user[key] === undefined && delete user[key]
+    );
 
-  // Update the User
-  User.updateById(
-    req.params.username,
-    user,
-    (err, data) => {
+    // Update the User
+    User.updateById(
+      req.params.username,
+      user,
+      (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message: `Not found User with username ${req.params.username}.`,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Error updating User with username " +
+                req.params.username,
+            });
+          }
+        } else {
+          res.status(200).send(data);
+        }
+      }
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
+};
+
+// * Delete a User with the specified userId in the request
+exports.delete = (req, res) => {
+  if (
+    checkAccessToken(req.cookies.auth) ==
+    req.params.username
+  ) {
+    User.remove(req.params.username, (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
@@ -147,37 +191,20 @@ exports.update = (req, res) => {
         } else {
           res.status(500).send({
             message:
-              "Error updating User with username " +
+              "Could not delete User with username " +
               req.params.username,
           });
         }
-      } else {
-        res.status(200).send(data);
-      }
-    }
-  );
-};
-
-// * Delete a User with the specified userId in the request
-exports.delete = (req, res) => {
-  User.remove(req.params.username, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        res.status(404).send({
-          message: `Not found User with username ${req.params.username}.`,
+      } else
+        res.status(200).send({
+          message: `User was deleted successfully!`,
         });
-      } else {
-        res.status(500).send({
-          message:
-            "Could not delete User with username " +
-            req.params.username,
-        });
-      }
-    } else
-      res.status(200).send({
-        message: `User was deleted successfully!`,
-      });
-  });
+    });
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
 
 // * Login/Authentication by checking password and username

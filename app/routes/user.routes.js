@@ -11,7 +11,6 @@ module.exports = (app) => {
   app.get("/users/:username", users.findOne);
 
   // Update a User with userId
-  // TODO: Resolve Error
   app.patch("/users/:username", users.update);
 
   // Delete a User with userId
