@@ -1,4 +1,5 @@
 const sql = require("./db");
+const bcrypt = require("bcrypt");
 
 // Constructor
 const User = function (user) {
@@ -150,22 +151,29 @@ User.checkPassword = (username, password, result) => {
       }
 
       if (res.length) {
-        if (res[0].password == password) {
-          console.log(
-            "password authenticated : ",
-            username
-          );
-          result(null, {
-            message: "authentication successful",
+        bcrypt
+          .compare(password, res[0].password)
+          .then((passResult) => {
+            if (passResult) {
+              console.log(
+                "password authenticated : ",
+                username
+              );
+              result(null, {
+                message: "authentication successful",
+              });
+              return;
+            } else {
+              result({ kind: "not_found" }, null);
+              return;
+            }
+          })
+          .catch((err) => {
+            console.error(err);
           });
-          return;
-        } else {
-          result({ kind: "not_found" }, null);
-          return;
-        }
+      } else {
+        result({ kind: "not_found" }, null);
       }
-
-      result({ kind: "not_found" }, null);
     }
   );
 };
