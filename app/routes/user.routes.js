@@ -12,7 +12,7 @@ module.exports = (app) => {
 
   // Update a User with userId
   // TODO: Resolve Error
-  app.put("/users/:username", users.update);
+  app.patch("/users/:username", users.update);
 
   // Delete a User with userId
   app.delete("/users/:username/", users.delete);

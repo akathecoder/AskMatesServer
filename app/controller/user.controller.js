@@ -104,10 +104,28 @@ exports.update = (req, res) => {
     });
   }
 
+  // Create a User
+  const user = {
+    firstName: req.body.firstName,
+    middleName: req.body.middleName,
+    lastName: req.body.lastName,
+    bio: req.body.bio,
+    batch: req.body.batch,
+    degree: req.body.degree,
+    field: req.body.field,
+    rollNo: req.body.rollNo,
+    dob: req.body.dob,
+  };
+
+  // Removes undefined keys
+  Object.keys(user).forEach(
+    (key) => user[key] === undefined && delete user[key]
+  );
+
   // Update the User
   User.updateById(
     req.params.username,
-    new User(req.body),
+    user,
     (err, data) => {
       if (err) {
         if (err.kind === "not_found") {

@@ -87,11 +87,10 @@ User.getAll = (result) => {
 };
 
 // * Updates the user data by username
-// ! Error: SQL Query
 User.updateById = (username, user, result) => {
   sql.query(
-    "UPDATE user SET ? WHERE username = " + username,
-    user,
+    "UPDATE user SET ? WHERE username = ?",
+    [user, username],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -106,10 +105,10 @@ User.updateById = (username, user, result) => {
       }
 
       console.log("updated user: ", {
-        id: username,
+        username: username,
         ...user,
       });
-      result(null, { id: username, ...user });
+      result(null, { username: username, ...user });
     }
   );
 };
