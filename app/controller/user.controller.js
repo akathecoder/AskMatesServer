@@ -1,7 +1,11 @@
 const User = require("../models/User.model.js");
 
+// Password Hashing
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
 // * Create and save a new Customer
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate Request
   if (!req.body) {
     res.status(400).send({
@@ -26,6 +30,20 @@ exports.create = (req, res) => {
     dob: req.body.dob,
     mobileNumber: req.body.mobileNumber,
   });
+
+  await bcrypt
+    .hash(user.password, saltRounds)
+    .then((hash) => {
+      user.password = hash;
+      console.log(hash);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while creating the User.",
+      });
+    });
 
   // Save User in the Database
   User.create(user, (err, data) => {
