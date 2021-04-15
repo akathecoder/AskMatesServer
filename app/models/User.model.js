@@ -1,4 +1,5 @@
 const sql = require("./db");
+const bcrypt = require("bcrypt");
 
 // Constructor
 const User = function (user) {
@@ -80,17 +81,16 @@ User.getAll = (result) => {
       return;
     }
 
-    console.log("users: ", res);
+    // console.log("users: ", res);
     result(null, res);
   });
 };
 
 // * Updates the user data by username
-// ! Error: SQL Query
 User.updateById = (username, user, result) => {
   sql.query(
-    "UPDATE user SET ? WHERE username = " + username,
-    user,
+    "UPDATE user SET ? WHERE username = ?",
+    [user, username],
     (err, res) => {
       if (err) {
         console.log("error: ", err);
@@ -105,10 +105,10 @@ User.updateById = (username, user, result) => {
       }
 
       console.log("updated user: ", {
-        id: username,
+        username: username,
         ...user,
       });
-      result(null, { id: username, ...user });
+      result(null, { username: username, ...user });
     }
   );
 };
@@ -150,22 +150,29 @@ User.checkPassword = (username, password, result) => {
       }
 
       if (res.length) {
-        if (res[0].password == password) {
-          console.log(
-            "password authenticated : ",
-            username
-          );
-          result(null, {
-            message: "authentication successful",
+        bcrypt
+          .compare(password, res[0].password)
+          .then((passResult) => {
+            if (passResult) {
+              console.log(
+                "password authenticated : ",
+                username
+              );
+              result(null, {
+                message: "authentication successful",
+              });
+              return;
+            } else {
+              result({ kind: "not_found" }, null);
+              return;
+            }
+          })
+          .catch((err) => {
+            console.error(err);
           });
-          return;
-        } else {
-          result({ kind: "not_found" }, null);
-          return;
-        }
+      } else {
+        result({ kind: "not_found" }, null);
       }
-
-      result({ kind: "not_found" }, null);
     }
   );
 };

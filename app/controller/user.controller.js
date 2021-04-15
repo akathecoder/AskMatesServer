@@ -1,7 +1,15 @@
 const User = require("../models/User.model.js");
+const {
+  generateAccessToken,
+  checkAccessToken,
+} = require("../utils/jwtAuth");
+
+// Password Hashing
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 // * Create and save a new Customer
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate Request
   if (!req.body) {
     res.status(400).send({
@@ -27,6 +35,20 @@ exports.create = (req, res) => {
     mobileNumber: req.body.mobileNumber,
   });
 
+  await bcrypt
+    .hash(user.password, saltRounds)
+    .then((hash) => {
+      user.password = hash;
+      console.log(hash);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while creating the User.",
+      });
+    });
+
   // Save User in the Database
   User.create(user, (err, data) => {
     if (err) {
@@ -43,38 +65,55 @@ exports.create = (req, res) => {
 
 // * Retrieve all Users from the database.
 exports.findAll = (req, res) => {
-  User.getAll((err, data) => {
-    if (err) {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving users.",
-      });
-    } else {
-      res.status(200).send(data);
-    }
-  });
+  // console.log(req.cookies.auth);
+
+  if (checkAccessToken(req.cookies.auth)) {
+    User.getAll((err, data) => {
+      if (err) {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while retrieving users.",
+        });
+      } else {
+        res.status(200).send(data);
+      }
+    });
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
 
 // * Find a Single User with a userId
 exports.findOne = (req, res) => {
-  User.findByUsername(req.params.username, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        res.status(404).send({
-          message: `Not found User with username ${req.params.username}.`,
-        });
-      } else {
-        res.status(500).send({
-          message:
-            "Error retrieving User with username " +
-            req.params.username,
-        });
+  if (checkAccessToken(req.cookies.auth)) {
+    User.findByUsername(
+      req.params.username,
+      (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message: `Not found User with username ${req.params.username}.`,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Error retrieving User with username " +
+                req.params.username,
+            });
+          }
+        } else {
+          res.status(200).send(data);
+        }
       }
-    } else {
-      res.status(200).send(data);
-    }
-  });
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
 
 // * Update a User identified by the username in the request
@@ -86,11 +125,64 @@ exports.update = (req, res) => {
     });
   }
 
-  // Update the User
-  User.updateById(
-    req.params.username,
-    new User(req.body),
-    (err, data) => {
+  if (
+    checkAccessToken(req.cookies.auth) ==
+    req.params.username
+  ) {
+    // Create a User
+    const user = {
+      firstName: req.body.firstName,
+      middleName: req.body.middleName,
+      lastName: req.body.lastName,
+      bio: req.body.bio,
+      batch: req.body.batch,
+      degree: req.body.degree,
+      field: req.body.field,
+      rollNo: req.body.rollNo,
+      dob: req.body.dob,
+    };
+
+    // Removes undefined keys
+    Object.keys(user).forEach(
+      (key) => user[key] === undefined && delete user[key]
+    );
+
+    // Update the User
+    User.updateById(
+      req.params.username,
+      user,
+      (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message: `Not found User with username ${req.params.username}.`,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Error updating User with username " +
+                req.params.username,
+            });
+          }
+        } else {
+          res.status(200).send(data);
+        }
+      }
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
+};
+
+// * Delete a User with the specified userId in the request
+exports.delete = (req, res) => {
+  if (
+    checkAccessToken(req.cookies.auth) ==
+    req.params.username
+  ) {
+    User.remove(req.params.username, (err, data) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
@@ -99,37 +191,20 @@ exports.update = (req, res) => {
         } else {
           res.status(500).send({
             message:
-              "Error updating User with username " +
+              "Could not delete User with username " +
               req.params.username,
           });
         }
-      } else {
-        res.status(200).send(data);
-      }
-    }
-  );
-};
-
-// * Delete a User with the specified userId in the request
-exports.delete = (req, res) => {
-  User.remove(req.params.username, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        res.status(404).send({
-          message: `Not found User with username ${req.params.username}.`,
+      } else
+        res.status(200).send({
+          message: `User was deleted successfully!`,
         });
-      } else {
-        res.status(500).send({
-          message:
-            "Could not delete User with username " +
-            req.params.username,
-        });
-      }
-    } else
-      res.status(200).send({
-        message: `User was deleted successfully!`,
-      });
-  });
+    });
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
 
 // * Login/Authentication by checking password and username
@@ -165,7 +240,16 @@ exports.authenticate = (req, res) => {
           });
         }
       } else {
-        res.status(200).send(data);
+        const token = generateAccessToken(
+          req.body.username
+        );
+        res
+          .status(200)
+          .cookie("auth", token, { httpOnly: true })
+          .send({
+            message: data.message,
+            auth: token,
+          });
       }
     }
   );

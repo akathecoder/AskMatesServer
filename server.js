@@ -1,5 +1,6 @@
 const express = require("express");
 var cors = require("cors");
+var cookieParser = require("cookie-parser");
 
 // Initialized Express App
 const app = express();
@@ -17,6 +18,8 @@ app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser());
 
 // simple route
 app.get("/", (req, res) => {
