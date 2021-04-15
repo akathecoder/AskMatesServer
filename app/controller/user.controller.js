@@ -216,6 +216,8 @@ exports.authenticate = (req, res) => {
     return;
   }
 
+  console.log(req.body);
+
   if (!req.body.username || !req.body.password) {
     res.status(400).send({
       message: "username and password required",
@@ -245,7 +247,14 @@ exports.authenticate = (req, res) => {
         );
         res
           .status(200)
-          .cookie("auth", token, { httpOnly: true })
+          .cookie("auth", token, {
+            httpOnly: true,
+            sameSite: true,
+          })
+          .cookie("username", req.body.username, {
+            httpOnly: true,
+            sameSite: true,
+          })
           .send({
             message: data.message,
             auth: token,
