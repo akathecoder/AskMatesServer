@@ -321,3 +321,35 @@ exports.email = (req, res) => {
     });
   });
 };
+
+// * Updates the password for the user
+
+exports.updatePassword = (req, res) => {
+  if (
+    req.cookies.username &&
+    checkAccessToken(req.cookies.auth) ==
+      req.cookies.username
+  ) {
+    User.changePassword(
+      req.cookies.username,
+      req.body.password,
+      req.body.newPassword,
+      (err, data) => {
+        if (err) {
+          res.status(500).send({
+            message:
+              "Could not change password for user with username " +
+              req.params.username,
+          });
+        } else
+          res.status(200).send({
+            message: `User password was successfully!`,
+          });
+      }
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
+};

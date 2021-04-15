@@ -1,5 +1,6 @@
 const sql = require("./db");
 const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 // Constructor
 const User = function (user) {
@@ -227,6 +228,50 @@ User.checkEmail = (email, result) => {
       }
 
       result(null, "email_not_found");
+    }
+  );
+};
+
+// * Changes Password of the User
+
+User.changePassword = (
+  username,
+  password,
+  newPassword,
+  result
+) => {
+  User.checkPassword(
+    username,
+    password,
+    async (err, data) => {
+      if (err) {
+        result(err, null);
+        return;
+      } else {
+        await bcrypt
+          .hash(newPassword, saltRounds)
+          .then((hash) => {
+            newPassword = hash;
+          })
+          .catch((err) => {
+            result(err, null);
+            return;
+          });
+
+        sql.query(
+          "UPDATE user SET password = ? WHERE username = ?",
+          [newPassword, username],
+          (err, res) => {
+            if (err) {
+              result(err, null);
+              return;
+            } else {
+              result(null, res);
+              return;
+            }
+          }
+        );
+      }
     }
   );
 };
