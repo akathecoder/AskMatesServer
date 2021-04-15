@@ -2,6 +2,7 @@ const Questions = require("../models/Question.model.js");
 
 // -------------------------------------------------------------------
 // * Create and save a new Question
+// --------------------------------
 exports.create = (req, res) => {
   if (!req.body) {
     res.status(400).send({
@@ -25,14 +26,10 @@ exports.create = (req, res) => {
     if (err) {
       res.status(500).send({
         message:
-          err.message ||
-          "Some error occurred while creating the Question.",
+          err.message || "Some error occurred while creating the Question.",
       });
     } else {
-      console.log(
-        req.body.questionId,
-        "000000000000000000000000"
-      );
+      console.log(req.body.questionId);
       res.status(200).send(data);
     }
   });
@@ -40,6 +37,7 @@ exports.create = (req, res) => {
 
 // -------------------------------------------------------------------
 // Update Question with questionId
+// --------------------------------
 exports.updateById = (req, res) => {
   // Validate Request
   if (!req.body) {
@@ -58,14 +56,12 @@ exports.updateById = (req, res) => {
       if (err.kind === "not_found") {
         res.status(404).send({
           message:
-            "Not Found question with questionId " +
-            req.params.questionId,
+            "Not Found question with questionId " + req.params.questionId,
         });
       } else {
         res.status(500).send({
           message:
-            "Error updating question with questionId " +
-            req.params.questionId,
+            "Error updating question with questionId " + req.params.questionId,
         });
       }
     } else {
@@ -75,42 +71,39 @@ exports.updateById = (req, res) => {
 };
 
 // -------------------------------------------------------------------
-// * Delete a Question with the specified questionId in the request
+// * Delete a Question with the questionId
+// ---------------------------------------
 exports.deleteById = (req, res) => {
-  Questions.deleteById(
-    req.params.questionId,
-    (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          res.status(404).send({
-            message:
-              "Not Found Question with questionId " +
-              req.params.questionId,
-          });
-        } else {
-          res.status(500).send({
-            message:
-              "Could not delete Question with questionId " +
-              req.params.questionId,
-          });
-        }
-      } else
-        res.status(200).send({
-          message: `Question was deleted successfully!`,
+  Questions.deleteById(req.params.questionId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message:
+            "Not Found Question with questionId " + req.params.questionId,
         });
-    }
-  );
+      } else {
+        res.status(500).send({
+          message:
+            "Could not delete Question with questionId " +
+            req.params.questionId,
+        });
+      }
+    } else
+      res.status(200).send({
+        message: `Question was deleted successfully!`,
+      });
+  });
 };
 
 // -------------------------------------------------------------------
-// * Retrieve all Questions from the database.
+// * Retrieve all Questions
+// ------------------------
 exports.getAll = (req, res) => {
   Questions.getAll((err, data) => {
     if (err) {
       res.status(500).send({
         message:
-          err.message ||
-          "Some error occurred while retrieving Questions.",
+          err.message || "Some error occurred while retrieving Questions.",
       });
     } else {
       res.status(200).send(data);
@@ -120,6 +113,7 @@ exports.getAll = (req, res) => {
 
 // -------------------------------------------------------------------
 // * Find a Single Question with a questionId
+// ------------------------------------------
 exports.getById = (req, res) => {
   if (req.query.questionId) {
     Questions.getById(req.query.questionId, (err, data) => {
@@ -127,8 +121,7 @@ exports.getById = (req, res) => {
         if (err.kind === "not_found") {
           res.status(404).send({
             message:
-              "Not Found Question with questionId " +
-              req.query.questionId,
+              "Not Found Question with questionId " + req.query.questionId,
           });
         } else {
           res.status(500).send({
@@ -146,15 +139,11 @@ exports.getById = (req, res) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message:
-              "Not Found Question with slug " +
-              req.query.slug,
+            message: "Not Found Question with slug " + req.query.slug,
           });
         } else {
           res.status(500).send({
-            message:
-              "Error while Find Question with slug " +
-              req.query.slug,
+            message: "Error while Find Question with slug " + req.query.slug,
           });
         }
       } else {
@@ -166,33 +155,29 @@ exports.getById = (req, res) => {
 
 // -------------------------------------------------------------------
 // * Find all the Question with a username
+// ---------------------------------------
 exports.getByUsername = (req, res) => {
-  Questions.getByUsername(
-    req.params.username,
-    (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          res.status(404).send({
-            message:
-              "Not Found Question with username " +
-              req.params.username,
-          });
-        } else {
-          res.status(500).send({
-            message:
-              "Error while Finding Question with username " +
-              req.params.username,
-          });
-        }
+  Questions.getByUsername(req.params.username, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: "Not Found Question with username " + req.params.username,
+        });
       } else {
-        res.status(200).send(data);
+        res.status(500).send({
+          message:
+            "Error while Finding Question with username " + req.params.username,
+        });
       }
+    } else {
+      res.status(200).send(data);
     }
-  );
+  });
 };
 
 // -------------------------------------------------------------------
-// Get Question by filtering the search in title and content of question.
+// Get Question by search in title and content of question.
+// --------------------------------------------------------
 exports.getBySearch = (req, res) => {
   // Validate Request
   if (!req.body) {
@@ -205,15 +190,39 @@ exports.getBySearch = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message:
-            "Not Found Question with text " +
-            req.params.search,
+          message: "Not Found Question with text " + req.params.search,
         });
       } else {
         res.status(500).send({
-          message:
-            "Error while Find Question with text " +
-            req.params.search,
+          message: "Error while Find Question with text " + req.params.search,
+        });
+      }
+    } else {
+      res.status(200).send(data);
+    }
+  });
+};
+
+// -------------------------------------------------------------------
+// Get Views updated on click of any question.
+// --------------------------------------------------------
+exports.updateViews = (req, res) => {
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+
+  Questions.updateViews(req.query.slug, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: "Not Found Question with slug " + req.query.slug,
+        });
+      } else {
+        res.status(500).send({
+          message: "Error while Find Question with slug " + req.query.slug,
         });
       }
     } else {
