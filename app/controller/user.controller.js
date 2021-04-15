@@ -323,7 +323,6 @@ exports.email = (req, res) => {
 };
 
 // * Updates the password for the user
-
 exports.updatePassword = (req, res) => {
   if (
     req.cookies.username &&
@@ -339,11 +338,41 @@ exports.updatePassword = (req, res) => {
           res.status(500).send({
             message:
               "Could not change password for user with username " +
-              req.params.username,
+              req.cookies.username,
           });
         } else
           res.status(200).send({
-            message: `User password was successfully!`,
+            message: `User password was changed successfully!`,
+          });
+      }
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
+};
+
+// * Updates the Mobile Number for the user
+exports.updateMobileNumber = (req, res) => {
+  if (
+    req.cookies.username &&
+    checkAccessToken(req.cookies.auth) ==
+      req.cookies.username
+  ) {
+    User.changeMobileNumber(
+      req.cookies.username,
+      req.body.mobileNumber,
+      (err, data) => {
+        if (err) {
+          res.status(500).send({
+            message:
+              "Could not change Mobile Number for user with username " +
+              req.cookies.username,
+          });
+        } else
+          res.status(200).send({
+            message: `Mobile Number was changed successfully!`,
           });
       }
     );

@@ -32,5 +32,5 @@ module.exports = (app) => {
   app.put("/updateEmail");
 
   // Update Mobile
-  app.put("/updateMobile");
+  app.put("/updateMobile", users.updateMobileNumber);
 };

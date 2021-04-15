@@ -233,7 +233,6 @@ User.checkEmail = (email, result) => {
 };
 
 // * Changes Password of the User
-
 User.changePassword = (
   username,
   password,
@@ -271,6 +270,27 @@ User.changePassword = (
             }
           }
         );
+      }
+    }
+  );
+};
+
+// * Changes Mobile Number of the User
+User.changeMobileNumber = (
+  username,
+  mobileNumber,
+  result
+) => {
+  sql.query(
+    "UPDATE user SET mobileNumber = ? WHERE username = ?",
+    [mobileNumber, username],
+    (err, res) => {
+      if (err) {
+        result(err, null);
+        return;
+      } else {
+        result(null, res);
+        return;
       }
     }
   );
