@@ -33,11 +33,11 @@ Answer.create = (newAnswer, cb) => {
 // -----------------------------------
 // Update Answer with answerId
 // -----------------------------------
-Answer.updateById = (answerId, { answerBody, doc }, cb) => {
-	const query = `UPDATE answer SET answerBody=?, doc=? WHERE answerId = ?`;
+Answer.updateById = (answerId, updatedAnswer, cb) => {
+	const query = `UPDATE answer SET ? WHERE answerId = ?`;
 	sql.query(
 		query,
-		[answerBody, doc, answerId],
+		[updatedAnswer, answerId],
 		(error, result) => {
 			if (error) {
 				console.log("ERROR: ", error);
