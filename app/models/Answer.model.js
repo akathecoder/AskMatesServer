@@ -33,11 +33,11 @@ Answer.create = (newAnswer, cb) => {
 // -----------------------------------
 // Update Answer with answerId
 // -----------------------------------
-Answer.updateById = (answerId, { answerBody, doc }, cb) => {
-	const query = `UPDATE answer SET answerBody=?, doc=? WHERE answerId = ?`;
+Answer.updateById = (answerId, updatedAnswer, cb) => {
+	const query = `UPDATE answer SET ? WHERE answerId = ?`;
 	sql.query(
 		query,
-		[answerBody, doc, answerId],
+		[updatedAnswer, answerId],
 		(error, result) => {
 			if (error) {
 				console.log("ERROR: ", error);
@@ -249,7 +249,7 @@ Answer.getByQuestionId = (questionId, cb) => {
 // -----------------------------------
 Answer.getByUsername = (username, cb) => {
 	const query =
-		"SELECT * FROM answer, question, user WHERE answer.username = ? AND answer.questionId = question.questionId AND question.username = user.username;";
+		"SELECT * FROM answer, question, user WHERE answer.username = ? AND answer.questionId = question.questionId AND answer.username = user.username;";
 	sql.query(query, [username], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
