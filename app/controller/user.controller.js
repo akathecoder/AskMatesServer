@@ -232,6 +232,10 @@ exports.authenticate = (req, res) => {
           res.status(400).send({
             message: `authentication unsuccessful`,
           });
+        } else if (err.kind === "not_valid") {
+          res.status(402).send({
+            message: `email authentication required`,
+          });
         } else {
           res.status(500).send({
             message:

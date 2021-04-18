@@ -151,7 +151,7 @@ User.remove = (username, result) => {
 // * Checks Password
 User.checkPassword = (username, password, result) => {
   sql.query(
-    "SELECT password from user WHERE username = ?",
+    "SELECT password, isValid from user WHERE username = ?",
     [username],
     (err, res) => {
       if (err) {
@@ -161,26 +161,31 @@ User.checkPassword = (username, password, result) => {
       }
 
       if (res.length) {
-        bcrypt
-          .compare(password, res[0].password)
-          .then((passResult) => {
-            if (passResult) {
-              console.log(
-                "password authenticated : ",
-                username
-              );
-              result(null, {
-                message: "authentication successful",
-              });
-              return;
-            } else {
-              result({ kind: "not_found" }, null);
-              return;
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        console.log("valid : " + res[0].isValid);
+        if (res[0].isValid) {
+          bcrypt
+            .compare(password, res[0].password)
+            .then((passResult) => {
+              if (passResult) {
+                console.log(
+                  "password authenticated : ",
+                  username
+                );
+                result(null, {
+                  message: "authentication successful",
+                });
+                return;
+              } else {
+                result({ kind: "not_found" }, null);
+                return;
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        } else {
+          result({ kind: "not_valid" }, null);
+        }
       } else {
         result({ kind: "not_found" }, null);
       }
