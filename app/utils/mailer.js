@@ -14,16 +14,15 @@ var transporter = nodemailer.createTransport({
   },
 });
 
-async function sendMail() {
+async function sendMail(to, name, username, link) {
   var mailOptions = {
     from: "sparsh4drive002@gmail.com",
-    to: "sparshpc@gmail.com",
-    subject: "Sending Email using Node.js",
-    text: "That was easy!",
+    to: to,
+    subject: "Test Activation Email",
     html: template(
-      "name",
-      "username",
-      "https://www.hostinger.in/tutorials/how-to-use-free-google-smtp-server" //activation link
+      name,
+      username,
+      link //activation link
     ),
   };
 
@@ -36,4 +35,9 @@ async function sendMail() {
   });
 }
 
-sendMail();
+sendMail(
+  "sparshagarwal@jklu.edu.in",
+  "Sparsh",
+  "akathecoder",
+  "https://www.hostinger.in/tutorials/how-to-use-free-google-smtp-server"
+);
