@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const nodemailer = require("nodemailer");
-const template = require("./mailer/template");
 
 var transporter = nodemailer.createTransport({
   pool: true,
@@ -14,16 +13,12 @@ var transporter = nodemailer.createTransport({
   },
 });
 
-async function sendMail(to, name, username, link) {
+async function sendMail(to, subject, html) {
   var mailOptions = {
-    from: "sparsh4drive002@gmail.com",
+    from: process.env.GMAIL_USER,
     to: to,
-    subject: "Test Activation Email",
-    html: template(
-      name,
-      username,
-      link //activation link
-    ),
+    subject: subject,
+    html: html,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -35,9 +30,4 @@ async function sendMail(to, name, username, link) {
   });
 }
 
-sendMail(
-  "sparshagarwal@jklu.edu.in",
-  "Sparsh",
-  "akathecoder",
-  "https://www.hostinger.in/tutorials/how-to-use-free-google-smtp-server"
-);
+module.exports = sendMail;

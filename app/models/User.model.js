@@ -1,6 +1,10 @@
 const sql = require("./db");
 const bcrypt = require("bcrypt");
 
+const {
+  sendRegisterEmail,
+} = require("../utils/jwtCheckEmail");
+
 // Constructor
 const User = function (user) {
   this.username = user.username;
@@ -36,6 +40,13 @@ User.create = (newUser, result) => {
       id: res.insertId,
       ...newUser,
     });
+
+    sendRegisterEmail(
+      newUser.firstName,
+      newUser.username,
+      newUser.email
+    );
+
     result(null, {
       message:
         "user created with username " + newUser.username,
