@@ -397,17 +397,26 @@ exports.getByUsername = (req, res) => {
 	});
 };
 
-exports.get = (req, res) => {
-	const questionId = req.query.questionId;
-	Answer.getByQuesId(questionId, (error, answerData) => {
+// -----------------------------------
+// Get answer by searchTerm
+// -----------------------------------
+exports.search = (req, res) => {
+	if (!req.params.searchTerm) {
+		console.log(
+			"Query Parameter searchTerm is not recieved"
+		);
+		return;
+	}
+	const searchTerm = req.params.searchTerm;
+	Answer.search(searchTerm, (error, answerData) => {
 		if (error) {
 			if (error.kind === "not_found") {
 				res.status(404).send({
-					message: `Cannot find answer with questionId ${questionId}`,
+					message: `Cannot find answer with searchTerm ${searchTerm}`,
 				});
 			} else {
 				res.status(500).send({
-					message: `Internal error occured while fetching the answer with questionId ${questionId}`,
+					message: `Internal error occured while fetching the answer with searchTerm ${searchTerm}`,
 				});
 			}
 		} else {

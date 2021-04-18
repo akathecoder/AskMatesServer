@@ -263,6 +263,25 @@ Answer.getByUsername = (username, cb) => {
 		cb(null, result);
 	});
 };
+
+// -----------------------------------
+// Get Answers by searchTerm
+// -----------------------------------
+Answer.search = (searchTerm, cb) => {
+	const query = `SELECT * FROM answer WHERE answerBody like ?;`;
+	sql.query(query, [`%${searchTerm}%`], (error, result) => {
+		if (error) {
+			console.log("Error : ", error);
+			cb(null, error);
+			return;
+		}
+		if (result.affectedRows === 0) {
+			// if not found any
+			cb({ kind: "not_found" }, null);
+		}
+		cb(null, result);
+	});
+};
 // -------------------------------------------------------------------
 
 module.exports = Answer;

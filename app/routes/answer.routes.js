@@ -1,5 +1,5 @@
-module.exports = (app) => {
-  const answers = require("../controller/answer.controller.js");
+module.exports = app => {
+	const answers = require("../controller/answer.controller.js");
 
 	// -------------------------------------------------------------------
 	// POST
@@ -33,6 +33,9 @@ module.exports = (app) => {
 
 	// Get an existing Answer by username
 	app.get("/answers/byusername/", answers.getByUsername);
+
+	// Get an answer with matching searchTerm
+	app.get("/answers/search/:searchTerm", answers.search);
 
 	// -------------------------------------------------------------------
 	// PATCH
