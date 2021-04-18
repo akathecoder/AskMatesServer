@@ -125,7 +125,7 @@ Answer.markCorrect = (answerId, cb) => {
 	sql.query(query, [answerId], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
-			cb(null, error);
+			cb(error, null);
 			return;
 		}
 
@@ -147,7 +147,7 @@ Answer.markIncorrect = (answerId, cb) => {
 	sql.query(query, [answerId], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
-			cb(null, error);
+			cb(error, null);
 			return;
 		}
 
@@ -168,7 +168,7 @@ Answer.deleteById = (answerId, cb) => {
 	sql.query(query, [answerId], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
-			cb(null, error);
+			cb(error, null);
 			return;
 		}
 
@@ -189,7 +189,7 @@ Answer.deleteByQuestionId = (questionId, cb) => {
 	sql.query(query, [questionId], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
-			cb(null, error);
+			cb(error, null);
 			return;
 		}
 
@@ -210,7 +210,7 @@ Answer.deleteByUsername = (username, cb) => {
 	sql.query(query, [username], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
-			cb(null, error);
+			cb(error, null);
 			return;
 		}
 
@@ -234,7 +234,7 @@ Answer.getByQuestionId = (questionId, cb) => {
 	sql.query(query, [questionId], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
-			cb(null, error);
+			cb(error, null);
 			return;
 		}
 		if (result.affectedRows === 0) {
@@ -253,7 +253,7 @@ Answer.getByUsername = (username, cb) => {
 	sql.query(query, [username], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
-			cb(null, error);
+			cb(error, null);
 			return;
 		}
 		if (result.affectedRows === 0) {
@@ -272,7 +272,7 @@ Answer.search = (searchTerm, cb) => {
 	sql.query(query, [`%${searchTerm}%`], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
-			cb(null, error);
+			cb(error, null);
 			return;
 		}
 		if (result.affectedRows === 0) {

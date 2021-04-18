@@ -35,6 +35,7 @@ exports.create = (req, res) => {
 					message:
 						error.message ||
 						"Internal error occured while creating the Answer.",
+					error: error,
 				});
 			} else {
 				res.status(200).send(answerData);
@@ -80,6 +81,7 @@ exports.update = (req, res) => {
 							message:
 								error.message ||
 								"Internal error occured while updating the Answer.",
+							error: error,
 						});
 					}
 				} else {
@@ -113,6 +115,7 @@ exports.upvote = (req, res) => {
 						message:
 							error.message ||
 							"Internal error occured while upvoting the Answer.",
+						error: error,
 					});
 				}
 			} else {
@@ -145,6 +148,7 @@ exports.downvote = (req, res) => {
 						message:
 							error.message ||
 							"Internal error occured while downvoting the Answer.",
+						error: error,
 					});
 				}
 			} else {
@@ -177,6 +181,7 @@ exports.markCorrect = (req, res) => {
 						message:
 							error.message ||
 							"Internal error occured while correcting the Answer.",
+						error: error,
 					});
 				}
 			} else {
@@ -209,6 +214,7 @@ exports.markIncorrect = (req, res) => {
 						message:
 							error.message ||
 							"Internal error occured while incorrecting the Answer.",
+						error: error,
 					});
 				}
 			} else {
@@ -239,6 +245,7 @@ exports.delete = (req, res) => {
 				} else {
 					res.status(500).send({
 						message: `Internal error occured while deleting the answer with id ${answerId}`,
+						error: error,
 					});
 				}
 			} else {
@@ -280,6 +287,7 @@ exports.deleteByQuestionId = (req, res) => {
 					} else {
 						res.status(500).send({
 							message: `Internal error occured while deleting the answer with questionID ${questionId}`,
+							error: error,
 						});
 					}
 				} else {
@@ -322,6 +330,7 @@ exports.deleteByUsername = (req, res) => {
 						} else {
 							res.status(500).send({
 								message: `Internal error occured while deleting the answer with username ${username}`,
+								error: error,
 							});
 						}
 					} else {
@@ -362,6 +371,7 @@ exports.getByQuestionId = (req, res) => {
 				} else {
 					res.status(500).send({
 						message: `Internal error occured while fetching the answer with questionId ${questionId}`,
+						error: error,
 					});
 				}
 			} else {
@@ -389,6 +399,7 @@ exports.getByUsername = (req, res) => {
 			} else {
 				res.status(500).send({
 					message: `Internal error occured while fetching the answer with username ${username}`,
+					error: error,
 				});
 			}
 		} else {
@@ -417,6 +428,7 @@ exports.search = (req, res) => {
 			} else {
 				res.status(500).send({
 					message: `Internal error occured while fetching the answer with searchTerm ${searchTerm}`,
+					error: error,
 				});
 			}
 		} else {
