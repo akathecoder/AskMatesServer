@@ -246,9 +246,13 @@ exports.authenticate = (req, res) => {
         res
           .status(200)
           .cookie("auth", token, { httpOnly: true })
+          .cookie("username", req.body.username, {
+            httpOnly: true,
+          })
           .send({
             message: data.message,
             auth: token,
+            username: req.body.username,
           });
       }
     }
