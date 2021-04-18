@@ -7,9 +7,9 @@ async function sendRegisterEmail(
   username,
   email
 ) {
+  const token = generateRegisterToken(username, email);
   const link =
-    "http://localhost:4001/confirmEmail/" +
-    generateRegisterToken(username, email);
+    "http://localhost:4001/confirmEmail/" + token;
 
   const mailTemplate = template(firstName, username, link);
 
@@ -18,6 +18,8 @@ async function sendRegisterEmail(
     "Confirm your Registration on AskMates",
     mailTemplate
   );
+
+  return token;
 }
 
 const generateRegisterToken = (username, email) => {
@@ -26,26 +28,6 @@ const generateRegisterToken = (username, email) => {
     process.env.TOKEN_SECRET,
     {
       expiresIn: 60 * 15,
-    }
-  );
-};
-
-const checkRegisterToken = (token) => {
-  if (token == null) {
-    return false;
-  }
-
-  return jwt.verify(
-    token,
-    process.env.TOKEN_SECRET,
-    (err, decoded) => {
-      if (err) {
-        console.error(err);
-        return false;
-      } else {
-        // console.log(decoded);
-        return decoded.username;
-      }
     }
   );
 };

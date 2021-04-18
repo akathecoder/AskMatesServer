@@ -41,7 +41,7 @@ User.create = (newUser, result) => {
       ...newUser,
     });
 
-    sendRegisterEmail(
+    const token = sendRegisterEmail(
       newUser.firstName,
       newUser.username,
       newUser.email
@@ -238,6 +238,23 @@ User.checkEmail = (email, result) => {
       }
 
       result(null, "email_not_found");
+    }
+  );
+};
+
+// * Makes a User Valid
+User.markValid = (username, result) => {
+  sql.query(
+    "UPDATE user SET `isValid` = TRUE WHERE `username` = ?",
+    [username],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      result(null, "validated");
     }
   );
 };

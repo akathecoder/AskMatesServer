@@ -24,4 +24,7 @@ module.exports = (app) => {
 
   // Checks if a email already exists
   app.get("/email", users.email);
+
+  // Confirms a Email JWT
+  app.get("/confirmEmail/:token", users.confirmEmail);
 };

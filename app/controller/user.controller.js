@@ -316,3 +316,26 @@ exports.email = (req, res) => {
     });
   });
 };
+
+// * Confirms a User Email
+exports.confirmEmail = (req, res) => {
+  const username = checkAccessToken(req.params.token);
+
+  if (username) {
+    User.markValid(username, (err, data) => {
+      if (err) {
+        res.status(500).send({
+          error: "Something went wrong",
+        });
+      } else {
+        res.status(200).send({
+          message: "Validated",
+        });
+      }
+    });
+  } else {
+    res.status(401).send({
+      message: "Invalid Registration Token",
+    });
+  }
+};
