@@ -258,6 +258,7 @@ exports.authenticate = (req, res) => {
           .send({
             message: data.message,
             auth: token,
+            username: req.body.username,
           });
       }
     }
