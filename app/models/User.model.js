@@ -2,6 +2,10 @@ const sql = require("./db");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+const {
+  sendRegisterEmail,
+} = require("../utils/jwtCheckEmail");
+
 // Constructor
 const User = function (user) {
   this.username = user.username;
@@ -37,6 +41,13 @@ User.create = (newUser, result) => {
       id: res.insertId,
       ...newUser,
     });
+
+    const token = sendRegisterEmail(
+      newUser.firstName,
+      newUser.username,
+      newUser.email
+    );
+
     result(null, {
       message:
         "user created with username " + newUser.username,
@@ -114,6 +125,35 @@ User.updateById = (username, user, result) => {
   );
 };
 
+User.updateEmailById = (username, userData, result) => {
+  sql.query(
+    "UPDATE user SET email = ?, isValid = FALSE WHERE username = ?",
+    [userData.newEmail, username],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("updated Email: ", {
+        username: username,
+        ...userData,
+      });
+
+      sendRegisterEmail("", username, userData.email);
+
+      result(null, { message: "Email Updated" });
+    }
+  );
+};
+
 // * Removes a User
 User.remove = (username, result) => {
   sql.query(
@@ -141,7 +181,7 @@ User.remove = (username, result) => {
 // * Checks Password
 User.checkPassword = (username, password, result) => {
   sql.query(
-    "SELECT password from user WHERE username = ?",
+    "SELECT password, isValid from user WHERE username = ?",
     [username],
     (err, res) => {
       if (err) {
@@ -151,26 +191,31 @@ User.checkPassword = (username, password, result) => {
       }
 
       if (res.length) {
-        bcrypt
-          .compare(password, res[0].password)
-          .then((passResult) => {
-            if (passResult) {
-              console.log(
-                "password authenticated : ",
-                username
-              );
-              result(null, {
-                message: "authentication successful",
-              });
-              return;
-            } else {
-              result({ kind: "not_found" }, null);
-              return;
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        console.log("valid : " + res[0].isValid);
+        if (res[0].isValid) {
+          bcrypt
+            .compare(password, res[0].password)
+            .then((passResult) => {
+              if (passResult) {
+                console.log(
+                  "password authenticated : ",
+                  username
+                );
+                result(null, {
+                  message: "authentication successful",
+                });
+                return;
+              } else {
+                result({ kind: "not_found" }, null);
+                return;
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        } else {
+          result({ kind: "not_valid" }, null);
+        }
       } else {
         result({ kind: "not_found" }, null);
       }
@@ -232,6 +277,21 @@ User.checkEmail = (email, result) => {
   );
 };
 
+
+// * Makes a User Valid
+User.markValid = (username, result) => {
+  sql.query(
+    "UPDATE user SET `isValid` = TRUE WHERE `username` = ?",
+    [username],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      result(null, "validated");
+
 // * Changes Password of the User
 User.changePassword = (
   username,
@@ -292,6 +352,7 @@ User.changeMobileNumber = (
         result(null, res);
         return;
       }
+
     }
   );
 };
