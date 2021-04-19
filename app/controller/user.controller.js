@@ -176,6 +176,54 @@ exports.update = (req, res) => {
   }
 };
 
+// * Update a User identified by the username in the request
+exports.updateEmail = (req, res) => {
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+
+  if (
+    checkAccessToken(req.cookies.auth) ==
+    req.params.username
+  ) {
+    // Create a User
+    const userData = {
+      email: req.body.email,
+      newEmail: req.body.newEmail,
+    };
+
+    // Update the User
+    User.updateEmailById(
+      req.params.username,
+      userData,
+      (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message: `Not found User with username ${req.params.username}.`,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Error updating User Email with username " +
+                req.params.username,
+            });
+          }
+        } else {
+          res.status(200).send(data);
+        }
+      }
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
+};
+
 // * Delete a User with the specified userId in the request
 exports.delete = (req, res) => {
   if (

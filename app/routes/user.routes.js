@@ -11,7 +11,10 @@ module.exports = (app) => {
   app.get("/users/:username", users.findOne);
 
   // Update a User with userId
-  app.patch("/users/:username", users.update);
+  app.patch("/users/data/:username", users.update);
+
+  // Update a User Email with userId
+  app.patch("/users/email/:username", users.updateEmail);
 
   // Delete a User with userId
   app.delete("/users/:username/", users.delete);

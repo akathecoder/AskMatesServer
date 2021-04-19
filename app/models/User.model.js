@@ -124,6 +124,35 @@ User.updateById = (username, user, result) => {
   );
 };
 
+User.updateEmailById = (username, userData, result) => {
+  sql.query(
+    "UPDATE user SET email = ?, isValid = FALSE WHERE username = ?",
+    [userData.newEmail, username],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      console.log("updated Email: ", {
+        username: username,
+        ...userData,
+      });
+
+      sendRegisterEmail("", username, userData.email);
+
+      result(null, { message: "Email Updated" });
+    }
+  );
+};
+
 // * Removes a User
 User.remove = (username, result) => {
   sql.query(
