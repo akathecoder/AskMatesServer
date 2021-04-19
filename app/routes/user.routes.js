@@ -24,4 +24,13 @@ module.exports = (app) => {
 
   // Checks if a email already exists
   app.get("/email", users.email);
+
+  // Update Password
+  app.put("/updatePassword", users.updatePassword);
+
+  // Update Email
+  app.put("/updateEmail");
+
+  // Update Mobile
+  app.put("/updateMobile", users.updateMobileNumber);
 };
