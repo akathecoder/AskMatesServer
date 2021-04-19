@@ -375,7 +375,6 @@ exports.email = (req, res) => {
   });
 };
 
-
 // * Confirms a User Email
 exports.confirmEmail = (req, res) => {
   const username = checkAccessToken(req.params.token);
@@ -395,6 +394,9 @@ exports.confirmEmail = (req, res) => {
   } else {
     res.status(401).send({
       message: "Invalid Registration Token",
+    });
+  }
+};
 
 // * Updates the password for the user
 exports.updatePassword = (req, res) => {
@@ -453,7 +455,6 @@ exports.updateMobileNumber = (req, res) => {
   } else {
     res.status(401).send({
       message: "Unauthorized",
-
     });
   }
 };

@@ -1,6 +1,5 @@
 const sql = require("./db");
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
 
 const {
   sendRegisterEmail,
@@ -277,7 +276,6 @@ User.checkEmail = (email, result) => {
   );
 };
 
-
 // * Makes a User Valid
 User.markValid = (username, result) => {
   sql.query(
@@ -291,68 +289,6 @@ User.markValid = (username, result) => {
       }
 
       result(null, "validated");
-
-// * Changes Password of the User
-User.changePassword = (
-  username,
-  password,
-  newPassword,
-  result
-) => {
-  User.checkPassword(
-    username,
-    password,
-    async (err, data) => {
-      if (err) {
-        result(err, null);
-        return;
-      } else {
-        await bcrypt
-          .hash(newPassword, saltRounds)
-          .then((hash) => {
-            newPassword = hash;
-          })
-          .catch((err) => {
-            result(err, null);
-            return;
-          });
-
-        sql.query(
-          "UPDATE user SET password = ? WHERE username = ?",
-          [newPassword, username],
-          (err, res) => {
-            if (err) {
-              result(err, null);
-              return;
-            } else {
-              result(null, res);
-              return;
-            }
-          }
-        );
-      }
-    }
-  );
-};
-
-// * Changes Mobile Number of the User
-User.changeMobileNumber = (
-  username,
-  mobileNumber,
-  result
-) => {
-  sql.query(
-    "UPDATE user SET mobileNumber = ? WHERE username = ?",
-    [mobileNumber, username],
-    (err, res) => {
-      if (err) {
-        result(err, null);
-        return;
-      } else {
-        result(null, res);
-        return;
-      }
-
     }
   );
 };
