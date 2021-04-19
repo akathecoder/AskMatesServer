@@ -9,6 +9,7 @@ const Question = function (question) {
   this.content = question.content;
   this.username = question.username;
   this.slug = question.slug;
+  this.tags = question.tags;
 };
 // -------------------------------------------------------------------
 // SETTERS
@@ -30,13 +31,13 @@ Question.create = (newQuestion, result) => {
 // Update the whole Question with questionId
 // -----------------------------------------
 Question.updateById = (quesId, question, result) => {
-  const query =
-    "UPDATE question SET title=?, content=?, doc=?, slug=? WHERE questionId = ?";
+  const query = `UPDATE question SET title=?, content=?, doc=?, slug=?, tags=? WHERE questionId = ?`;
   const parameters = [
     question.title,
     question.content,
     question.doc,
     question.slug,
+    question.tags,
     quesId,
   ];
   sql.query(query, parameters, (err, res) => {
@@ -81,7 +82,7 @@ Question.deleteById = (quesId, result) => {
 // ---------------------
 Question.getAll = (result) => {
   const query =
-    "SELECT questionId, doc, views, title,content, slug, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username";
+    "SELECT questionId, doc, views, title,content, slug, tags, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username";
   sql.query(query, (err, res) => {
     if (err) {
       console.log("error: ", err);
@@ -97,7 +98,7 @@ Question.getAll = (result) => {
 // --------------------------
 Question.getById = (quesId, result) => {
   const query =
-    "SELECT questionId, doc, views, title,content, slug, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username and questionId = ?";
+    "SELECT questionId, doc, views, title,content, slug, tags, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username and questionId = ?";
   const parameters = [quesId];
   sql.query(query, parameters, (err, res) => {
     if (err) {
@@ -109,7 +110,7 @@ Question.getById = (quesId, result) => {
       result({ kind: "not_found" }, null);
       return;
     }
-    result(null, res);
+    result(null, res[0]);
   });
 };
 
@@ -118,7 +119,7 @@ Question.getById = (quesId, result) => {
 // -----------------------------
 Question.getBySlug = (slug, result) => {
   const query =
-    "SELECT questionId, doc, views, title,content, slug, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username and slug = ?";
+    "SELECT questionId, doc, views, title,content, slug, tags, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username and slug = ?";
   const parameters = [slug];
   sql.query(query, parameters, (err, res) => {
     if (err) {
@@ -130,7 +131,7 @@ Question.getBySlug = (slug, result) => {
       result({ kind: "not_found" }, null);
       return;
     }
-    result(null, res);
+    result(null, res[0]);
   });
 };
 
@@ -138,7 +139,8 @@ Question.getBySlug = (slug, result) => {
 // Get Question by userId
 // ----------------------
 Question.getByUsername = (username, result) => {
-  const query = "SELECT * FROM question WHERE username = ?";
+  const query =
+    "SELECT questionId, doc, views, title,content, slug, tags, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username and question.username = ?";
   const parameters = [username];
   sql.query(query, parameters, (err, res) => {
     if (err) {
@@ -159,7 +161,7 @@ Question.getByUsername = (username, result) => {
 // ---------------------------------------------------
 Question.getBySearch = (description, result) => {
   const query =
-    "SELECT questionId, doc, views, title,content, slug, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username and (title like ? or content like ?)";
+    "SELECT questionId, doc, views, title,content, slug, tags, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username and (title like ? or content like ? or tags like ?)";
   description = "%" + description + "%";
   const parameters = [description, description];
 

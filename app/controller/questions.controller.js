@@ -23,6 +23,7 @@ exports.create = (req, res) => {
       content: req.body.content,
       username: username,
       slug: slugify(req.body.title),
+      tags: req.body.tags ? req.body.tags.toLowerCase() : null,
     });
 
     // Save Question in the Database
@@ -49,6 +50,7 @@ exports.create = (req, res) => {
 // --------------------------------
 exports.updateById = (req, res) => {
   const username = checkAccessToken(req, cookies.auth);
+
   if (username) {
     // Validate Request
     if (!req.body) {
@@ -64,6 +66,7 @@ exports.updateById = (req, res) => {
       content: req.body.content,
       slug: slugify(req.body.title),
       username: req.body.username,
+      tags: req.body.tags ? req.body.tags.toLowerCase() : null,
     });
 
     // To check if the user who posted this question is only updating..
@@ -213,8 +216,8 @@ exports.getByUsername = (req, res) => {
 };
 
 // -------------------------------------------------------------------
-// Get Question by search in title and content of question.
-// --------------------------------------------------------
+// Get Question by search in title or content of question or in tags.
+// -------------------------------------------------------------------
 exports.getBySearch = (req, res) => {
   // Validate Request
   if (!req.body) {
@@ -222,8 +225,8 @@ exports.getBySearch = (req, res) => {
       message: "Content can not be empty!",
     });
   }
-
-  Questions.getBySearch(req.params.search, (err, data) => {
+  const search = req.params.search.toLowerCase();
+  Questions.getBySearch(search, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
