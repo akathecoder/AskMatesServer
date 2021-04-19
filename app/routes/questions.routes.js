@@ -19,7 +19,7 @@ module.exports = (app) => {
   // Update the views of question on click of any question by Question slug
   app.patch("/question", questions.updateViews);
 
-  // Retrieve a Question using filter in content or question description.
+  // Retrieve a Question using filter in content or question description or in Tags.
   app.get("/questions/question/:search", questions.getBySearch);
 
   // Retrieve all Questions by userId
