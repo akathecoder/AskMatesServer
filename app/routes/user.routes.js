@@ -11,7 +11,10 @@ module.exports = (app) => {
   app.get("/users/:username", users.findOne);
 
   // Update a User with userId
-  app.patch("/users/:username", users.update);
+  app.patch("/users/data/:username", users.update);
+
+  // Update a User Email with userId
+  app.patch("/users/email/:username", users.updateEmail);
 
   // Delete a User with userId
   app.delete("/users/:username/", users.delete);
@@ -24,4 +27,18 @@ module.exports = (app) => {
 
   // Checks if a email already exists
   app.get("/email", users.email);
+
+
+  // Confirms a Email JWT
+  app.get("/confirmEmail/:token", users.confirmEmail);
+
+  // Update Password
+  app.put("/updatePassword", users.updatePassword);
+
+  // Update Email
+  app.put("/updateEmail");
+
+  // Update Mobile
+  app.put("/updateMobile", users.updateMobileNumber);
+
 };

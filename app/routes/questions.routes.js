@@ -5,10 +5,10 @@ module.exports = (app) => {
   app.post("/question", questions.create);
 
   // Update the Question by questionId
-  app.patch("/questions/:questionId", questions.updateById);
+  app.patch("/question/:questionId", questions.updateById);
 
   // Delete the Question by questionId
-  app.delete("/questions/:questionId", questions.deleteById);
+  app.delete("/question/:questionId", questions.deleteById);
 
   // Retrieve all Questions
   app.get("/questions", questions.getAll);
@@ -19,7 +19,7 @@ module.exports = (app) => {
   // Update the views of question on click of any question by Question slug
   app.patch("/question", questions.updateViews);
 
-  // Retrieve a Question using filter in content or question description.
+  // Retrieve a Question using filter in content or question description or in Tags.
   app.get("/questions/question/:search", questions.getBySearch);
 
   // Retrieve all Questions by userId

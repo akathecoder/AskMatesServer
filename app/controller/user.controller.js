@@ -176,6 +176,54 @@ exports.update = (req, res) => {
   }
 };
 
+// * Update a User identified by the username in the request
+exports.updateEmail = (req, res) => {
+  // Validate Request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+
+  if (
+    checkAccessToken(req.cookies.auth) ==
+    req.params.username
+  ) {
+    // Create a User
+    const userData = {
+      email: req.body.email,
+      newEmail: req.body.newEmail,
+    };
+
+    // Update the User
+    User.updateEmailById(
+      req.params.username,
+      userData,
+      (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message: `Not found User with username ${req.params.username}.`,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Error updating User Email with username " +
+                req.params.username,
+            });
+          }
+        } else {
+          res.status(200).send(data);
+        }
+      }
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
+};
+
 // * Delete a User with the specified userId in the request
 exports.delete = (req, res) => {
   if (
@@ -216,6 +264,8 @@ exports.authenticate = (req, res) => {
     return;
   }
 
+  console.log(req.body);
+
   if (!req.body.username || !req.body.password) {
     res.status(400).send({
       message: "username and password required",
@@ -232,6 +282,10 @@ exports.authenticate = (req, res) => {
           res.status(400).send({
             message: `authentication unsuccessful`,
           });
+        } else if (err.kind === "not_valid") {
+          res.status(402).send({
+            message: `email authentication required`,
+          });
         } else {
           res.status(500).send({
             message:
@@ -245,10 +299,18 @@ exports.authenticate = (req, res) => {
         );
         res
           .status(200)
-          .cookie("auth", token, { httpOnly: true })
+          .cookie("auth", token, {
+            httpOnly: true,
+            sameSite: true,
+          })
+          .cookie("username", req.body.username, {
+            httpOnly: true,
+            sameSite: true,
+          })
           .send({
             message: data.message,
             auth: token,
+            username: req.body.username,
           });
       }
     }
@@ -311,4 +373,88 @@ exports.email = (req, res) => {
       message: "email already exists",
     });
   });
+};
+
+// * Confirms a User Email
+exports.confirmEmail = (req, res) => {
+  const username = checkAccessToken(req.params.token);
+
+  if (username) {
+    User.markValid(username, (err, data) => {
+      if (err) {
+        res.status(500).send({
+          error: "Something went wrong",
+        });
+      } else {
+        res.status(200).send({
+          message: "Validated",
+        });
+      }
+    });
+  } else {
+    res.status(401).send({
+      message: "Invalid Registration Token",
+    });
+  }
+};
+
+// * Updates the password for the user
+exports.updatePassword = (req, res) => {
+  if (
+    req.cookies.username &&
+    checkAccessToken(req.cookies.auth) ==
+      req.cookies.username
+  ) {
+    User.changePassword(
+      req.cookies.username,
+      req.body.password,
+      req.body.newPassword,
+      (err, data) => {
+        if (err) {
+          res.status(500).send({
+            message:
+              "Could not change password for user with username " +
+              req.cookies.username,
+          });
+        } else
+          res.status(200).send({
+            message: `User password was changed successfully!`,
+          });
+      }
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
+};
+
+// * Updates the Mobile Number for the user
+exports.updateMobileNumber = (req, res) => {
+  if (
+    req.cookies.username &&
+    checkAccessToken(req.cookies.auth) ==
+      req.cookies.username
+  ) {
+    User.changeMobileNumber(
+      req.cookies.username,
+      req.body.mobileNumber,
+      (err, data) => {
+        if (err) {
+          res.status(500).send({
+            message:
+              "Could not change Mobile Number for user with username " +
+              req.cookies.username,
+          });
+        } else
+          res.status(200).send({
+            message: `Mobile Number was changed successfully!`,
+          });
+      }
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
