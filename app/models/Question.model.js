@@ -163,7 +163,7 @@ Question.getBySearch = (description, result) => {
   const query =
     "SELECT questionId, doc, views, title,content, slug, tags, question.username, firstName, middleName, lastName, batch, degree, field FROM question, user WHERE question.username = user.username and (title like ? or content like ? or tags like ?)";
   description = "%" + description + "%";
-  const parameters = [description, description];
+  const parameters = [description, description, description];
 
   sql.query(query, parameters, (err, res) => {
     if (err) {
