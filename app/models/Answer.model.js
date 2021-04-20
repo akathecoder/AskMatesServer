@@ -268,7 +268,7 @@ Answer.getByUsername = (username, cb) => {
 // Get Answers by searchTerm
 // -----------------------------------
 Answer.search = (searchTerm, cb) => {
-	const query = `SELECT * FROM answer WHERE answerBody like ?;`;
+	const query = `SELECT answerId, answerBody, correct, upVotes, downVotes, questionId, answer.doc, answer.username, firstName, middleName, lastName, email, bio, batch, degree, field FROM answer, user WHERE answer.username=user.username AND answerBody like ?;`;
 	sql.query(query, [`%${searchTerm}%`], (error, result) => {
 		if (error) {
 			console.log("Error : ", error);
