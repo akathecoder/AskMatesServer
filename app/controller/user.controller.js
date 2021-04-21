@@ -304,7 +304,6 @@ exports.authenticate = (req, res) => {
             sameSite: true,
           })
           .cookie("username", req.body.username, {
-            httpOnly: true,
             sameSite: true,
           })
           .send({

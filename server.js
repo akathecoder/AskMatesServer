@@ -9,8 +9,10 @@ const app = express();
 app.use(
   cors({
     origin: "http://localhost:3000",
+    credentials: true,
   })
 );
+// app.options("*", cors());
 
 // parse requests of content-type - application/json
 // * https://medium.com/@mmajdanski/express-body-parser-and-why-may-not-need-it-335803cd048c
