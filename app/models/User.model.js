@@ -1,5 +1,6 @@
 const sql = require("./db");
 const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const {
   sendRegisterEmail,
@@ -59,7 +60,7 @@ User.findByUsername = (username, result) => {
   console.log(username);
 
   sql.query(
-    `SELECT username, firstName, middleName, lastName, email, bio, batch, degree, field, rollNo, dob FROM user WHERE username = ?`,
+    `SELECT username, firstName, middleName, lastName, email, bio, batch, degree, field, rollNo, dob, mobileNumber FROM user WHERE username = ?`,
     username,
     (err, res) => {
       if (err) {
@@ -291,6 +292,43 @@ User.markValid = (username, result) => {
       result(null, "validated");
     }
   );
+};
+
+// * Updates Password
+User.changePassword = (
+  username,
+  password,
+  newPassword,
+  result
+) => {
+  User.checkPassword(username, password, (err, res) => {
+    if (err) {
+      result({ kind: "not_valid" }, null);
+    } else {
+      bcrypt
+        .hash(newPassword, saltRounds)
+        .then((hash) => {
+          newPassword = hash;
+
+          sql.query(
+            "UPDATE user SET password = ? WHERE username = ?",
+            [newPassword, username],
+            (err, res) => {
+              if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+              }
+
+              result(null, "password changed");
+            }
+          );
+        })
+        .catch((err) => {
+          result(err, null);
+        });
+    }
+  });
 };
 
 module.exports = User;
