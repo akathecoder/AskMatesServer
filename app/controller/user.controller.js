@@ -300,7 +300,7 @@ exports.authenticate = (req, res) => {
         res
           .status(200)
           .cookie("auth", token, {
-            httpOnly: true,
+            // httpOnly: true,
             sameSite: true,
           })
           .cookie("username", req.body.username, {
