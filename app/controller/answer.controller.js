@@ -7,7 +7,7 @@ const { checkAccessToken } = require("../utils/jwtAuth");
 // -----------------------------------
 exports.create = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     // Validate Request
     if (!req.body) {
@@ -35,6 +35,7 @@ exports.create = (req, res) => {
           message:
             error.message ||
             "Internal error occured while creating the Answer.",
+          error: error,
         });
       } else {
         res.status(200).send(answerData);
@@ -52,7 +53,7 @@ exports.create = (req, res) => {
 // -----------------------------------
 exports.update = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     // Validate Request
     if (!req.body) {
@@ -80,6 +81,7 @@ exports.update = (req, res) => {
               message:
                 error.message ||
                 "Internal error occured while updating the Answer.",
+              error: error,
             });
           }
         } else {
@@ -99,7 +101,7 @@ exports.update = (req, res) => {
 // -----------------------------------
 exports.upvote = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     const answerId = req.params.answerId;
     Answer.upvote(answerId, (error, answerData) => {
@@ -113,6 +115,7 @@ exports.upvote = (req, res) => {
             message:
               error.message ||
               "Internal error occured while upvoting the Answer.",
+            error: error,
           });
         }
       } else {
@@ -131,7 +134,7 @@ exports.upvote = (req, res) => {
 // -----------------------------------
 exports.downvote = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     const answerId = req.params.answerId;
     Answer.downvote(answerId, (error, answerData) => {
@@ -145,6 +148,7 @@ exports.downvote = (req, res) => {
             message:
               error.message ||
               "Internal error occured while downvoting the Answer.",
+            error: error,
           });
         }
       } else {
@@ -163,7 +167,7 @@ exports.downvote = (req, res) => {
 // -----------------------------------
 exports.markCorrect = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     const answerId = req.params.answerId;
     Answer.markCorrect(answerId, (error, answerData) => {
@@ -177,6 +181,7 @@ exports.markCorrect = (req, res) => {
             message:
               error.message ||
               "Internal error occured while correcting the Answer.",
+            error: error,
           });
         }
       } else {
@@ -195,7 +200,7 @@ exports.markCorrect = (req, res) => {
 // -----------------------------------
 exports.markIncorrect = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     const answerId = req.params.answerId;
     Answer.markIncorrect(answerId, (error, answerData) => {
@@ -209,6 +214,7 @@ exports.markIncorrect = (req, res) => {
             message:
               error.message ||
               "Internal error occured while incorrecting the Answer.",
+            error: error,
           });
         }
       } else {
@@ -227,7 +233,7 @@ exports.markIncorrect = (req, res) => {
 // -----------------------------------
 exports.delete = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     const answerId = req.params.answerId;
     Answer.deleteById(answerId, (error, answerData) => {
@@ -239,6 +245,7 @@ exports.delete = (req, res) => {
         } else {
           res.status(500).send({
             message: `Internal error occured while deleting the answer with id ${answerId}`,
+            error: error,
           });
         }
       } else {
@@ -260,7 +267,7 @@ exports.delete = (req, res) => {
 // -----------------------------------
 exports.deleteByQuestionId = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     if (!req.query.questionId) {
       console.log(
@@ -280,6 +287,7 @@ exports.deleteByQuestionId = (req, res) => {
           } else {
             res.status(500).send({
               message: `Internal error occured while deleting the answer with questionID ${questionId}`,
+              error: error,
             });
           }
         } else {
@@ -302,7 +310,7 @@ exports.deleteByQuestionId = (req, res) => {
 // -----------------------------------
 exports.deleteByUsername = (req, res) => {
   // Validate user
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     if (!req.query.username) {
       console.log(
@@ -322,6 +330,7 @@ exports.deleteByUsername = (req, res) => {
             } else {
               res.status(500).send({
                 message: `Internal error occured while deleting the answer with username ${username}`,
+                error: error,
               });
             }
           } else {
@@ -362,6 +371,7 @@ exports.getByQuestionId = (req, res) => {
         } else {
           res.status(500).send({
             message: `Internal error occured while fetching the answer with questionId ${questionId}`,
+            error: error,
           });
         }
       } else {
@@ -389,6 +399,7 @@ exports.getByUsername = (req, res) => {
       } else {
         res.status(500).send({
           message: `Internal error occured while fetching the answer with username ${username}`,
+          error: error,
         });
       }
     } else {
@@ -397,17 +408,27 @@ exports.getByUsername = (req, res) => {
   });
 };
 
-exports.get = (req, res) => {
-  const questionId = req.query.questionId;
-  Answer.getByQuesId(questionId, (error, answerData) => {
+// -----------------------------------
+// Get answer by searchTerm
+// -----------------------------------
+exports.search = (req, res) => {
+  if (!req.params.searchTerm) {
+    console.log(
+      "Query Parameter searchTerm is not recieved"
+    );
+    return;
+  }
+  const searchTerm = req.params.searchTerm;
+  Answer.search(searchTerm, (error, answerData) => {
     if (error) {
       if (error.kind === "not_found") {
         res.status(404).send({
-          message: `Cannot find answer with questionId ${questionId}`,
+          message: `Cannot find answer with searchTerm ${searchTerm}`,
         });
       } else {
         res.status(500).send({
-          message: `Internal error occured while fetching the answer with questionId ${questionId}`,
+          message: `Internal error occured while fetching the answer with searchTerm ${searchTerm}`,
+          error: error,
         });
       }
     } else {

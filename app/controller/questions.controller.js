@@ -1,11 +1,12 @@
 const Questions = require("../models/Question.model.js");
+const { checkAccessToken } = require("../utils/jwtAuth");
 const slugify = require("slugify");
 
 // -------------------------------------------------------------------
 // * Create and save a new Question
 // --------------------------------
 exports.create = (req, res) => {
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     // Validate Request
     if (!req.body) {
@@ -49,7 +50,7 @@ exports.create = (req, res) => {
 // Update Question with questionId
 // --------------------------------
 exports.updateById = (req, res) => {
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
 
   if (username) {
     // Validate Request
@@ -107,7 +108,7 @@ exports.updateById = (req, res) => {
 // * Delete a Question with the questionId
 // ---------------------------------------
 exports.deleteById = (req, res) => {
-  const username = checkAccessToken(req, cookies.auth);
+  const username = checkAccessToken(req.cookies.auth);
   if (username) {
     Questions.deleteById(req.params.questionId, (err, data) => {
       if (err) {
@@ -254,15 +255,15 @@ exports.updateViews = (req, res) => {
     });
   }
 
-  Questions.updateViews(req.query.slug, (err, data) => {
+  Questions.updateViews(req.body.slug, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: "Not Found Question with slug " + req.query.slug,
+          message: "Not Found Question with slug " + req.body.slug,
         });
       } else {
         res.status(500).send({
-          message: "Error while Find Question with slug " + req.query.slug,
+          message: "Error while Find Question with slug " + req.body.slug,
         });
       }
     } else {
