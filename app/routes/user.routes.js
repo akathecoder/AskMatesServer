@@ -7,16 +7,16 @@ module.exports = (app) => {
   // Retrieve all users
   app.get("/users", users.findAll);
 
-  // Retrieve a single user with userId
+  // Retrieve a single user with username
   app.get("/users/:username", users.findOne);
 
-  // Update a User with userId
+  // Update a User with username
   app.patch("/users/data/:username", users.update);
 
-  // Update a User Email with userId
+  // Update a User Email with username
   app.patch("/users/email/:username", users.updateEmail);
 
-  // Delete a User with userId
+  // Delete a User with username
   app.delete("/users/:username/", users.delete);
 
   // Login by Authenticate Password
@@ -27,7 +27,6 @@ module.exports = (app) => {
 
   // Checks if a email already exists
   app.get("/email", users.email);
-
 
   // Confirms a Email JWT
   app.get("/confirmEmail/:token", users.confirmEmail);
@@ -40,5 +39,4 @@ module.exports = (app) => {
 
   // Update Mobile
   app.put("/updateMobile", users.updateMobileNumber);
-
 };

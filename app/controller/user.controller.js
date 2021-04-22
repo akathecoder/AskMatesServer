@@ -140,6 +140,7 @@ exports.update = (req, res) => {
       field: req.body.field,
       rollNo: req.body.rollNo,
       dob: req.body.dob,
+      mobileNumber: req.body.mobileNumber,
     };
 
     // Removes undefined keys
