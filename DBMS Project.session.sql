@@ -1,2 +1,2 @@
-DELETE FROM user
-WHERE `username` = "email1";
+DELETE FROM question
+WHERE `tags` is NULL;
