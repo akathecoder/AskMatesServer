@@ -8,6 +8,10 @@ const {
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+const {
+  sendForgotPasswordEmail,
+} = require("../utils/jwtForgotPassword");
+
 // * Create and save a new Customer
 exports.create = async (req, res) => {
   // Validate Request
@@ -459,5 +463,70 @@ exports.updateMobileNumber = (req, res) => {
     res.status(401).send({
       message: "Unauthorized",
     });
+  }
+};
+
+// * Authentication for change password
+exports.authenticateForgotPassword = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content cannot be empty!",
+    });
+    return;
+  }
+
+  if (!req.body.email) {
+    res.status(400).send({
+      message: "email required",
+    });
+    return;
+  }
+
+  User.checkEmail(req.body.email, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        error: "Something went wrong",
+      });
+    }
+
+    if (data == "email_not_found") {
+      res.status(404).send({
+        message: "Not a registered email id",
+      });
+      return;
+    }
+
+    res.status(200).send({
+      message: "email exists",
+    });
+
+    sendForgotPasswordEmail(req.body.email);
+  });
+};
+
+// * Update forgotten password
+exports.updateForgottenPassword = (req, res) => {
+  if (
+    checkAccessToken(
+      req.body.authenticateForgotPassword
+    ) === req.body.email
+  ) {
+    User.updateForgottenPassword(
+      req.body.newPassword,
+      req.body.email,
+      (err, data) => {
+        if (err) {
+          res.status(500).send({
+            message:
+              "Could not change password for user with email " +
+              req.body.email,
+          });
+        } else {
+          res.status(200).send({
+            message: `User password was changed successfully!`,
+          });
+        }
+      }
+    );
   }
 };
