@@ -225,28 +225,34 @@ exports.getById = (req, res) => {
 // * Find all the Question with a username
 // ---------------------------------------
 exports.getByUsername = (req, res) => {
-  Questions.getByUsername(
-    req.params.username,
-    (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          res.status(404).send({
-            message:
-              "Not Found Question with username " +
-              req.params.username,
-          });
+  if (checkAccessToken(req.cookies.auth)) {
+    Questions.getByUsername(
+      req.cookies.username,
+      (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message:
+                "Not Found Question with username " +
+                req.cookies.username,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Error while Finding Question with username " +
+                req.cookies.username,
+            });
+          }
         } else {
-          res.status(500).send({
-            message:
-              "Error while Finding Question with username " +
-              req.params.username,
-          });
+          res.status(200).send(data);
         }
-      } else {
-        res.status(200).send(data);
       }
-    }
-  );
+    );
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
 
 // -------------------------------------------------------------------
