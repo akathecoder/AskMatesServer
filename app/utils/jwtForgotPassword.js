@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const template = require("./mailer/forgotPassword/template");
+// const template = require("./mailer/forgotPassword/template");
 const sendMail = require("./mailer");
 const { generateAccessToken } = require("./jwtAuth");
 
