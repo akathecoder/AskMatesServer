@@ -385,27 +385,29 @@ exports.getByQuestionId = (req, res) => {
 // Get an existing Answer by username
 // -----------------------------------
 exports.getByUsername = (req, res) => {
-  if (!req.query.username) {
-    console.log("Query Parameter username is not recieved");
-    return;
-  }
-  const username = req.query.username;
-  Answer.getByUsername(username, (error, answerData) => {
-    if (error) {
-      if (error.kind === "not_found") {
-        res.status(404).send({
-          message: `Cannot find answer with username ${username}`,
-        });
+  if (checkAccessToken(req.cookies.auth)) {
+    const username = req.cookies.username;
+    Answer.getByUsername(username, (error, answerData) => {
+      if (error) {
+        if (error.kind === "not_found") {
+          res.status(404).send({
+            message: `Cannot find answer with username ${username}`,
+          });
+        } else {
+          res.status(500).send({
+            message: `Internal error occured while fetching the answer with username ${username}`,
+            error: error,
+          });
+        }
       } else {
-        res.status(500).send({
-          message: `Internal error occured while fetching the answer with username ${username}`,
-          error: error,
-        });
+        res.status(200).send(answerData);
       }
-    } else {
-      res.status(200).send(answerData);
-    }
-  });
+    });
+  } else {
+    res.status(401).send({
+      message: "Unauthorized",
+    });
+  }
 };
 
 // -----------------------------------
