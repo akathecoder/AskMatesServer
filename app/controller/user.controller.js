@@ -310,11 +310,7 @@ exports.authenticate = (req, res) => {
           .cookie("username", req.body.username, {
             sameSite: true,
           })
-          .send({
-            message: data.message,
-            auth: token,
-            username: req.body.username,
-          });
+          .redirect(process.env.CLIENT_URL + "q/");
       }
     }
   );

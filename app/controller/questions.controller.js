@@ -46,9 +46,7 @@ exports.create = (req, res) => {
       }
     });
   } else {
-    res.status(401).send({
-      message: "Unauthorized Access",
-    });
+    res.status(307).redirect(process.env.CLIENT_URL + "q/");
   }
 };
 
