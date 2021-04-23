@@ -18,13 +18,18 @@ exports.create = (req, res) => {
     // Create a new Question
     const newQuestion = new Questions({
       questionId: null,
-      doc: new Date().toISOString().slice(0, 19).replace("T", " "),
+      doc: new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " "),
       views: 0,
       title: req.body.title,
       content: req.body.content,
       username: username,
       slug: slugify(req.body.title),
-      tags: req.body.tags ? req.body.tags.toLowerCase() : null,
+      tags: req.body.tags
+        ? req.body.tags.toLowerCase()
+        : "",
     });
 
     // Save Question in the Database
@@ -32,7 +37,8 @@ exports.create = (req, res) => {
       if (err) {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while creating the Question.",
+            err.message ||
+            "Some error occurred while creating the Question.",
         });
       } else {
         console.log(req.body.questionId);
@@ -62,39 +68,50 @@ exports.updateById = (req, res) => {
 
     // Create a new Question
     const question = new Questions({
-      doc: new Date().toISOString().slice(0, 19).replace("T", " "),
+      doc: new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " "),
       title: req.body.title,
       content: req.body.content,
       slug: slugify(req.body.title),
       username: req.body.username,
-      tags: req.body.tags ? req.body.tags.toLowerCase() : null,
+      tags: req.body.tags
+        ? req.body.tags.toLowerCase()
+        : null,
     });
 
     // To check if the user who posted this question is only updating..
     if (question.username === username) {
       const quesId = req.params.questionId;
       // Update the Question
-      Questions.updateById(quesId, question, (err, data) => {
-        if (err) {
-          if (err.kind === "not_found") {
-            res.status(404).send({
-              message:
-                "Not Found question with questionId " + req.params.questionId,
-            });
+      Questions.updateById(
+        quesId,
+        question,
+        (err, data) => {
+          if (err) {
+            if (err.kind === "not_found") {
+              res.status(404).send({
+                message:
+                  "Not Found question with questionId " +
+                  req.params.questionId,
+              });
+            } else {
+              res.status(500).send({
+                message:
+                  "Error updating question with questionId " +
+                  req.params.questionId,
+              });
+            }
           } else {
-            res.status(500).send({
-              message:
-                "Error updating question with questionId " +
-                req.params.questionId,
-            });
+            res.status(200).send(data);
           }
-        } else {
-          res.status(200).send(data);
         }
-      });
+      );
     } else {
       res.status(405).send({
-        message: "You are not authorized to update this Question",
+        message:
+          "You are not authorized to update this Question",
       });
     }
   } else {
@@ -110,25 +127,29 @@ exports.updateById = (req, res) => {
 exports.deleteById = (req, res) => {
   const username = checkAccessToken(req.cookies.auth);
   if (username) {
-    Questions.deleteById(req.params.questionId, (err, data) => {
-      if (err) {
-        if (err.kind === "not_found") {
-          res.status(404).send({
-            message:
-              "Not Found Question with questionId " + req.params.questionId,
+    Questions.deleteById(
+      req.params.questionId,
+      (err, data) => {
+        if (err) {
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message:
+                "Not Found Question with questionId " +
+                req.params.questionId,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Could not delete Question with questionId " +
+                req.params.questionId,
+            });
+          }
+        } else
+          res.status(200).send({
+            message: `Question was deleted successfully!`,
           });
-        } else {
-          res.status(500).send({
-            message:
-              "Could not delete Question with questionId " +
-              req.params.questionId,
-          });
-        }
-      } else
-        res.status(200).send({
-          message: `Question was deleted successfully!`,
-        });
-    });
+      }
+    );
   } else {
     res.status(401).send({
       message: "Unauthorized Access",
@@ -144,7 +165,8 @@ exports.getAll = (req, res) => {
     if (err) {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving Questions.",
+          err.message ||
+          "Some error occurred while retrieving Questions.",
       });
     } else {
       res.status(200).send(data);
@@ -162,7 +184,8 @@ exports.getById = (req, res) => {
         if (err.kind === "not_found") {
           res.status(404).send({
             message:
-              "Not Found Question with questionId " + req.query.questionId,
+              "Not Found Question with questionId " +
+              req.query.questionId,
           });
         } else {
           res.status(500).send({
@@ -180,11 +203,15 @@ exports.getById = (req, res) => {
       if (err) {
         if (err.kind === "not_found") {
           res.status(404).send({
-            message: "Not Found Question with slug " + req.query.slug,
+            message:
+              "Not Found Question with slug " +
+              req.query.slug,
           });
         } else {
           res.status(500).send({
-            message: "Error while Find Question with slug " + req.query.slug,
+            message:
+              "Error while Find Question with slug " +
+              req.query.slug,
           });
         }
       } else {
@@ -198,22 +225,28 @@ exports.getById = (req, res) => {
 // * Find all the Question with a username
 // ---------------------------------------
 exports.getByUsername = (req, res) => {
-  Questions.getByUsername(req.params.username, (err, data) => {
-    if (err) {
-      if (err.kind === "not_found") {
-        res.status(404).send({
-          message: "Not Found Question with username " + req.params.username,
-        });
+  Questions.getByUsername(
+    req.params.username,
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message:
+              "Not Found Question with username " +
+              req.params.username,
+          });
+        } else {
+          res.status(500).send({
+            message:
+              "Error while Finding Question with username " +
+              req.params.username,
+          });
+        }
       } else {
-        res.status(500).send({
-          message:
-            "Error while Finding Question with username " + req.params.username,
-        });
+        res.status(200).send(data);
       }
-    } else {
-      res.status(200).send(data);
     }
-  });
+  );
 };
 
 // -------------------------------------------------------------------
@@ -231,11 +264,15 @@ exports.getBySearch = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: "Not Found Question with text " + req.params.search,
+          message:
+            "Not Found Question with text " +
+            req.params.search,
         });
       } else {
         res.status(500).send({
-          message: "Error while Find Question with text " + req.params.search,
+          message:
+            "Error while Find Question with text " +
+            req.params.search,
         });
       }
     } else {
@@ -259,11 +296,14 @@ exports.updateViews = (req, res) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: "Not Found Question with slug " + req.body.slug,
+          message:
+            "Not Found Question with slug " + req.body.slug,
         });
       } else {
         res.status(500).send({
-          message: "Error while Find Question with slug " + req.body.slug,
+          message:
+            "Error while Find Question with slug " +
+            req.body.slug,
         });
       }
     } else {

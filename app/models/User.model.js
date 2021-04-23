@@ -100,6 +100,9 @@ User.getAll = (result) => {
 
 // * Updates the user data by username
 User.updateById = (username, user, result) => {
+  console.log("usereee");
+  console.log(user);
+
   sql.query(
     "UPDATE user SET ? WHERE username = ?",
     [user, username],

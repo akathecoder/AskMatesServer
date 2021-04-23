@@ -11,6 +11,8 @@ const generateAccessToken = (username) => {
 };
 
 const checkAccessToken = (token) => {
+  // console.log("token  " + token);
+
   if (token == null) {
     return false;
   }

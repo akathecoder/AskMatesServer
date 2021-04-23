@@ -88,9 +88,12 @@ exports.findAll = (req, res) => {
 
 // * Find a Single User with a userId
 exports.findOne = (req, res) => {
+  console.log(req.cookies);
   if (checkAccessToken(req.cookies.auth)) {
     User.findByUsername(
-      req.params.username,
+      req.query.username
+        ? req.query.username
+        : req.cookies.username,
       (err, data) => {
         if (err) {
           if (err.kind === "not_found") {
