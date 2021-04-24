@@ -11,8 +11,6 @@ const generateAccessToken = (username) => {
 };
 
 const checkAccessToken = (token) => {
-  // console.log("token  " + token);
-
   if (token == null) {
     return false;
   }
@@ -25,7 +23,6 @@ const checkAccessToken = (token) => {
         console.error(err);
         return false;
       } else {
-        // console.log(decoded);
         return decoded.username;
       }
     }

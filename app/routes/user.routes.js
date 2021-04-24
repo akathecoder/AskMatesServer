@@ -44,7 +44,7 @@ module.exports = (app) => {
   app.get("/confirmEmail/:token", users.confirmEmail);
 
   // Update Password
-  app.put("/updatePassword", users.updatePassword);
+  app.patch("/updatePassword", users.updatePassword);
 
   // Update Email
   app.put("/updateEmail");
