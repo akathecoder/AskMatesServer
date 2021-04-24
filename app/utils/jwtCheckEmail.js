@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const template = require("./mailer/template");
+const template = require("./mailer/registrationTemplate");
 const sendMail = require("./mailer");
 
 async function sendRegisterEmail(

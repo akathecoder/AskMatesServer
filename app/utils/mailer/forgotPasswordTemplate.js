@@ -1,4 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+const links = require("./images");
+
+module.exports = function getTemplate(
+  name,
+  username,
+  link
+) {
+  return `
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html
   xmlns="http://www.w3.org/1999/xhtml"
@@ -423,7 +431,7 @@
                             alt="Image"
                             border="0"
                             class="left fixedwidth"
-                            src="images/logo_1.png"
+                            src=${links.LOGO_1}
                             style="
                               text-decoration: none;
                               -ms-interpolation-mode: bicubic;
@@ -546,7 +554,7 @@
                             >
                               <span style="font-size: 22px"
                                 >Hello
-                                <strong>Username</strong>,
+                                <strong>${name}</strong>,
                                 registration completed</span
                               >
                             </p>
@@ -588,15 +596,8 @@
                                 margin: 0;
                               "
                             >
-                              Nulla quis scelerisque purus.
-                              Fusce auctor massa orci.
-                              Integer nec lorem id leo
-                              ultrices blandit vel et nulla.
-                              Pellentesque eget aliquet mi.
-                              Duis dui felis, scelerisque
-                              quis rutrum gravida, maximus
-                              vitae metus. Maecenas ut diam
-                              lacus. In scelerisque.
+                              Welcome to Ask Mates. <br />
+                              We have received a request to reset your AskMates account password. If you do not recognize this request kindly delete this email and tell to us about the same.
                             </p>
                           </div>
                         </div>
@@ -615,7 +616,7 @@
                             alt="Image"
                             border="0"
                             class="center fixedwidth"
-                            src="images/illo.png"
+                            src=${links.ILLO}
                             style="
                               text-decoration: none;
                               -ms-interpolation-mode: bicubic;
@@ -631,59 +632,7 @@
                           <!--[if mso]></td></tr></table><![endif]-->
                         </div>
                         <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 20px; padding-bottom: 10px; font-family: Arial, sans-serif"><![endif]-->
-                        <div
-                          style="
-                            color: #555555;
-                            font-family: Cabin, Arial,
-                              Helvetica Neue, Helvetica,
-                              sans-serif;
-                            line-height: 1.2;
-                            padding-top: 20px;
-                            padding-right: 10px;
-                            padding-bottom: 10px;
-                            padding-left: 10px;
-                          "
-                        >
-                          <div
-                            class="txtTinyMce-wrapper"
-                            style="
-                              font-size: 12px;
-                              line-height: 1.2;
-                              color: #555555;
-                              font-family: Cabin, Arial,
-                                Helvetica Neue, Helvetica,
-                                sans-serif;
-                              mso-line-height-alt: 14px;
-                            "
-                          >
-                            <p
-                              style="
-                                font-size: 16px;
-                                line-height: 1.2;
-                                word-break: break-word;
-                                mso-line-height-alt: 19px;
-                                margin: 0;
-                              "
-                            >
-                              <span style="font-size: 16px"
-                                >Thanks so much for joining
-                                our site! </span
-                              ><br /><span
-                                style="font-size: 16px"
-                                >Your username is:
-                                <span
-                                  style="
-                                    color: #ffbf00;
-                                    font-size: 16px;
-                                  "
-                                  ><strong
-                                    >TestUsername</strong
-                                  ></span
-                                ></span
-                              >
-                            </p>
-                          </div>
-                        </div>
+                        
                         <!--[if mso]></td></tr></table><![endif]-->
                         <!--[if (!mso)&(!IE)]><!-->
                       </div>
@@ -697,7 +646,7 @@
             </div>
             <div
               style="
-                background-image: url('images/bg_password.gif');
+                background-image: url(${links.BG_PASSWORD});
                 background-position: top center;
                 background-repeat: no-repeat;
                 background-color: transparent;
@@ -791,14 +740,14 @@
                               "
                             >
                               <span style="font-size: 16px"
-                                >To finish signing up and
+                                >To 
                                 <span
                                   style="
                                     color: #132f40;
                                     font-size: 16px;
                                   "
                                   ><strong
-                                    >activate your account
+                                    >reset your account password
                                   </strong></span
                                 ></span
                               >
@@ -813,7 +762,7 @@
                               "
                             >
                               <span style="font-size: 16px"
-                                >you just need to set you
+                                >you just need to click on this link and set your new
                                 password.</span
                               >
                             </p>
@@ -832,7 +781,7 @@
                         >
                           <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 5px; padding-right: 10px; padding-bottom: 35px; padding-left: 10px" align="left"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="www.thisisatestemail.com" style="height:31.5pt;width:190.5pt;v-text-anchor:middle;" arcsize="120%" stroke="false" fillcolor="#FFD500"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#132F40; font-family:Arial, sans-serif; font-size:15px"><!
                           [endif]--><a
-                            href="www.thisisatestemail.com"
+                            href="${link}"
                             style="
                               -webkit-text-size-adjust: none;
                               text-decoration: none;
@@ -888,7 +837,7 @@
                                         line-height: 30px;
                                         font-size: 15px;
                                       "
-                                      >ACTIVATE MY ACCOUNT
+                                      >RESET MY PASSWORD
                                       &gt;</span
                                     ></strong
                                   ></span
@@ -1007,7 +956,7 @@
                                 margin: 0;
                               "
                             >
-                              Lorem ipsum road, 389 London
+                              Your very own doubt solver
                             </p>
                           </div>
                         </div>
@@ -1125,7 +1074,7 @@
                                           ><img
                                             alt="Instagram"
                                             height="32"
-                                            src="images/instagram2x.png"
+                                            src=${links.INSTAGRAM2X}
                                             style="
                                               text-decoration: none;
                                               -ms-interpolation-mode: bicubic;
@@ -1153,7 +1102,7 @@
                                           ><img
                                             alt="LinkedIn"
                                             height="32"
-                                            src="images/linkedin2x.png"
+                                            src=${links.LINKEDIN2X}
                                             style="
                                               text-decoration: none;
                                               -ms-interpolation-mode: bicubic;
@@ -1421,6 +1370,7 @@
                             >
                               <!--[if vml]><table align="left" cellpadding="0" cellspacing="0" role="presentation" style="display:inline-block;padding-left:0px;padding-right:0px;mso-table-lspace: 0pt;mso-table-rspace: 0pt;"><![endif]-->
                               <!--[if !vml]><!-->
+                              
                             </td>
                           </tr>
                         </table>
@@ -1442,3 +1392,6 @@
     <!--[if (IE)]></div><![endif]-->
   </body>
 </html>
+
+`;
+};

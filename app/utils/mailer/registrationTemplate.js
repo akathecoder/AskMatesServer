@@ -596,15 +596,8 @@ module.exports = function getTemplate(
                                 margin: 0;
                               "
                             >
-                              Nulla quis scelerisque purus.
-                              Fusce auctor massa orci.
-                              Integer nec lorem id leo
-                              ultrices blandit vel et nulla.
-                              Pellentesque eget aliquet mi.
-                              Duis dui felis, scelerisque
-                              quis rutrum gravida, maximus
-                              vitae metus. Maecenas ut diam
-                              lacus. In scelerisque.
+                              Welcome to Ask Mates. <br />
+                              You have registered on our platform with this email account. In order to complete your registration please confirm your email address.
                             </p>
                           </div>
                         </div>
@@ -821,8 +814,7 @@ module.exports = function getTemplate(
                               "
                             >
                               <span style="font-size: 16px"
-                                >you just need to set you
-                                password.</span
+                                >you just need to confirm your email.</span
                               >
                             </p>
                           </div>
@@ -1015,7 +1007,7 @@ module.exports = function getTemplate(
                                 margin: 0;
                               "
                             >
-                              Lorem ipsum road, 389 London
+                              Your very own doubt solver
                             </p>
                           </div>
                         </div>
