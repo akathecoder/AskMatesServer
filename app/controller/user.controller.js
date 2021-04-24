@@ -418,11 +418,19 @@ exports.updatePassword = (req, res) => {
       req.body.newPassword,
       (err, data) => {
         if (err) {
-          res.status(500).send({
-            message:
-              "Could not change password for user with username " +
-              req.cookies.username,
-          });
+          if (err.kind === "not_found") {
+            res.status(404).send({
+              message:
+                "Current Password Not match for username" +
+                req.cookies.username,
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Could not change password for user with username " +
+                req.cookies.username,
+            });
+          }
         } else
           res.status(200).send({
             message: `User password was changed successfully!`,
