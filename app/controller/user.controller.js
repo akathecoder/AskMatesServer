@@ -43,7 +43,6 @@ exports.create = async (req, res) => {
     .hash(user.password, saltRounds)
     .then((hash) => {
       user.password = hash;
-      console.log(hash);
     })
     .catch((err) => {
       res.status(500).send({
@@ -69,8 +68,6 @@ exports.create = async (req, res) => {
 
 // * Retrieve all Users from the database.
 exports.findAll = (req, res) => {
-  // console.log(req.cookies.auth);
-
   if (checkAccessToken(req.cookies.auth)) {
     User.getAll((err, data) => {
       if (err) {
@@ -92,7 +89,6 @@ exports.findAll = (req, res) => {
 
 // * Find a Single User with a userId
 exports.findOne = (req, res) => {
-  console.log(req.cookies);
   if (checkAccessToken(req.cookies.auth)) {
     User.findByUsername(
       req.query.username
@@ -271,8 +267,6 @@ exports.authenticate = (req, res) => {
     });
     return;
   }
-
-  console.log(req.body);
 
   if (!req.body.username || !req.body.password) {
     res.status(400).send({

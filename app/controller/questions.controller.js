@@ -41,7 +41,6 @@ exports.create = (req, res) => {
             "Some error occurred while creating the Question.",
         });
       } else {
-        console.log(req.body.questionId);
         res.status(200).send(data);
       }
     });
@@ -224,28 +223,28 @@ exports.getById = (req, res) => {
 // ---------------------------------------
 exports.getByUsername = (req, res) => {
   if (checkAccessToken(req.cookies.auth)) {
-    Questions.getByUsername(
-      req.cookies.username,
-      (err, data) => {
-        if (err) {
-          if (err.kind === "not_found") {
-            res.status(404).send({
-              message:
-                "Not Found Question with username " +
-                req.cookies.username,
-            });
-          } else {
-            res.status(500).send({
-              message:
-                "Error while Finding Question with username " +
-                req.cookies.username,
-            });
-          }
+    const username = req.query.username
+      ? req.query.username
+      : req.cookies.username;
+    Questions.getByUsername(username, (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message:
+              "Not Found Question with username " +
+              username,
+          });
         } else {
-          res.status(200).send(data);
+          res.status(500).send({
+            message:
+              "Error while Finding Question with username " +
+              username,
+          });
         }
+      } else {
+        res.status(200).send(data);
       }
-    );
+    });
   } else {
     res.status(401).send({
       message: "Unauthorized",

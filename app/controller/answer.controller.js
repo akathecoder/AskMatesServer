@@ -386,7 +386,9 @@ exports.getByQuestionId = (req, res) => {
 // -----------------------------------
 exports.getByUsername = (req, res) => {
   if (checkAccessToken(req.cookies.auth)) {
-    const username = req.cookies.username;
+    const username = req.query.username
+      ? req.query.username
+      : req.cookies.username;
     Answer.getByUsername(username, (error, answerData) => {
       if (error) {
         if (error.kind === "not_found") {

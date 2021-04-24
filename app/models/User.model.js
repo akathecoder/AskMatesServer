@@ -32,15 +32,9 @@ User.create = (newUser, result) => {
 
   sql.query(sqlQuery2, newUser, (err, res) => {
     if (err) {
-      // console.log("error: ", err);
       result(err, null);
       return;
     }
-
-    console.log("created user: ", {
-      id: res.insertId,
-      ...newUser,
-    });
 
     const token = sendRegisterEmail(
       newUser.firstName,
@@ -57,8 +51,6 @@ User.create = (newUser, result) => {
 
 // * Returns the data of User by userId by running SELECT
 User.findByUsername = (username, result) => {
-  console.log(username);
-
   sql.query(
     `SELECT username, firstName, middleName, lastName, email, bio, batch, degree, field, rollNo, dob, mobileNumber FROM user WHERE username = ?`,
     username,
@@ -70,7 +62,6 @@ User.findByUsername = (username, result) => {
       }
 
       if (res.length) {
-        console.log("found user: ", res[0]);
         result(null, res[0]);
         return;
       }
@@ -92,17 +83,12 @@ User.getAll = (result) => {
       result(null, err);
       return;
     }
-
-    // console.log("users: ", res);
     result(null, res);
   });
 };
 
 // * Updates the user data by username
 User.updateById = (username, user, result) => {
-  console.log("usereee");
-  console.log(user);
-
   sql.query(
     "UPDATE user SET ? WHERE username = ?",
     [user, username],
@@ -119,10 +105,6 @@ User.updateById = (username, user, result) => {
         return;
       }
 
-      console.log("updated user: ", {
-        username: username,
-        ...user,
-      });
       result(null, { username: username, ...user });
     }
   );
@@ -144,11 +126,6 @@ User.updateEmailById = (username, userData, result) => {
         result({ kind: "not_found" }, null);
         return;
       }
-
-      console.log("updated Email: ", {
-        username: username,
-        ...userData,
-      });
 
       sendRegisterEmail("", username, userData.email);
 
@@ -174,8 +151,6 @@ User.remove = (username, result) => {
         result({ kind: "not_found" }, null);
         return;
       }
-
-      console.log("deleted user with username: ", username);
       result(null, res);
     }
   );
@@ -194,7 +169,6 @@ User.checkPassword = (username, password, result) => {
       }
 
       if (res.length) {
-        console.log("valid : " + res[0].isValid);
         if (res[0].isValid) {
           bcrypt
             .compare(password, res[0].password)
