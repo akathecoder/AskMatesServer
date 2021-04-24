@@ -414,7 +414,7 @@ exports.updatePassword = (req, res) => {
       req.body.newPassword,
       (err, data) => {
         if (err) {
-          if (err.kind === "not_found") {
+          if (err.kind === "not_valid") {
             res.status(404).send({
               message:
                 "Current Password Not match for username" +
