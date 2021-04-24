@@ -256,7 +256,7 @@ Answer.getByUsername = (username, cb) => {
       cb(error, null);
       return;
     }
-    if (result.affectedRows === 0) {
+    if (!result.length) {
       // if not found any
       cb({ kind: "not_found" }, null);
     }

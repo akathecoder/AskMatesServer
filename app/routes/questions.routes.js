@@ -20,8 +20,11 @@ module.exports = (app) => {
   app.patch("/question", questions.updateViews);
 
   // Retrieve a Question using filter in content or question description or in Tags.
-  app.get("/questions/question/:search", questions.getBySearch);
+  app.get(
+    "/questions/question/:search",
+    questions.getBySearch
+  );
 
   // Retrieve all Questions by userId
-  app.get("/questions/username/:username", questions.getByUsername);
+  app.get("/questions/username", questions.getByUsername);
 };
