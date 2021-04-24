@@ -4,6 +4,12 @@ module.exports = (app) => {
   // Create a new User
   app.post("/users", users.create);
 
+  // Authenticate Forgot Password
+  app.post(
+    "/authenticateForgotPassword",
+    users.authenticateForgotPassword
+  );
+
   // Retrieve all users
   app.get("/users", users.findAll);
 
@@ -15,6 +21,12 @@ module.exports = (app) => {
 
   // Update a User Email with username
   app.patch("/users/email/:username", users.updateEmail);
+
+  // Update forgotten password
+  app.patch(
+    "/updateForgottenPassword",
+    users.updateForgottenPassword
+  );
 
   // Delete a User with username
   app.delete("/users/:username/", users.delete);

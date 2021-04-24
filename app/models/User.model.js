@@ -334,4 +334,27 @@ User.changePassword = (
   });
 };
 
+User.updateForgottenPassword = (
+  newPassword,
+  email,
+  result
+) => {
+  const query = `UPDATE user SET password = ? WHERE email = ?`;
+  bcrypt
+    .hash(newPassword, saltRounds)
+    .then((hash) => {
+      sql.query(query, [hash, email], (err, res) => {
+        if (err) {
+          console.log("error: ", err);
+          result(err, null);
+          return;
+        }
+        result(null, "password changed");
+      });
+    })
+    .catch((err) => {
+      result(err, null);
+    });
+};
+
 module.exports = User;
